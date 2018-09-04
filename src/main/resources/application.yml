@@ -14,12 +14,9 @@ spring:
     static-locations: classpath:/templates/,classpath:/static/
   datasource: 
     druid: 
-#      url: jdbc:mysql://192.168.2.200:3306/novel?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=UTC
-#      username: root
-#      password: 123456
-      url: jdbc:mysql://lvzhoubao.mysql.rds.aliyuncs.com/novel_web?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=UTC
-      username: novel
-      password: Novel1qaz2wsx
+      url: jdbc:mysql://127.0.0.1:3306/novel?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=UTC
+      username: root
+      password: 123456
       driver-class-name: com.mysql.cj.jdbc.Driver
       initial-size: 5
       min-idle: 10

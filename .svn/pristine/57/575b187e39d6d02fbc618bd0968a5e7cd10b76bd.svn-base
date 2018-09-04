@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="js/html5shiv.js"></script>
+<script type="text/javascript" src="js/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/ng-pagination.min.css" />
+<title>小说信息</title>
+<style type="text/css">
+body {
+	padding: 20px 0 0 20px;
+}
+.wrap{
+    width: 150px; /* //设置需要固定的宽度 */
+    white-space: nowrap; /* //不换行 */
+    text-overflow: ellipsis; /* //超出部分用....代替 */
+   overflow: hidden;/*   //超出隐藏 */
+    }
+.pager {
+	margin: 20px;
+	text-align: right;
+}
+p {
+     margin-bottom: 0px;
+}
+</style>
+</head>
+
+<body>
+	<div ng-app="myApp" ng-controller="bidinfoCtrl">
+		<nav class="breadcrumb">
+			<i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>
+			推广中心<span class="c-gray en">&gt;</span> 推广链接 <a
+				class="btn btn-success radius r"
+				style="line-height: 1.6em; margin-top: 3px"
+				href="javascript:location.replace(location.href);" title="刷新"><i
+				class="Hui-iconfont">&#xe68f;</i></a>
+		</nav>
+		<div class="page-container">
+			<div class="mt-20 ">
+				<table
+					class="table table-border table-bordered table-hover table-bg table-sort">
+					<thead>
+						<tr class="text-c">
+							<th width="50">序号</th>
+							<th width="50">ID</th>
+							<th width="300">推广连接</th>
+							<th width="130">入口页面</th>
+							<th width="100">点击次数</th>
+							<th width="100">新增关注</th>
+							<th width="100">充值金额</th>
+							<th width="200">操作</th>
+						</tr>
+					</thead>
+					<tbody ng-repeat="po in schemelist">
+						<tr class="text-c">
+							<td>{{$index+1}}</td>
+							<td>{{po.id}}</td>
+							<td><p>{{po.scheme_url}}</p></br><p>创建日期：{{po.create_time | date:'yyyy-MM-dd'}}</p></td>
+							<td><p>{{po.novel_name}}</p></br><p>{{po.chapter_name}}</p></td>
+							<td>{{po.click_no}}</td>
+							<td>{{po.subscribe_num}}</td>
+							<td><p>{{po.recharge_money  |currency }}</p></br><p>{{po.recharge_num}}笔</p></td>
+							<td class="td-manage">
+								<button type="submit" class="loan_button btn btn-success radius" ng-click="scheme_delete(po.id)">删除</button>
+							</td>
+						</tr>
+
+					</tbody>
+
+				</table>
+
+			</div>
+		</div>
+		<div class="div" type="text-align:right;">
+			<div class="col-md-12">
+				<div class="dataTables_info">
+					共 {{count}}条记录，每页 {{pageSize}} 条，当前第 {{currentPage}} /
+					{{pageCount}} 页
+				</div>
+			</div>
+		</div>
+		<div class="pager">
+			<pager page-count="pageCount" current-page="currentPage"
+				on-page-change="onPageChange()" first-text="首页" next-text="下一页"
+				prev-text="上一页" last-text="尾页"></pager>
+		</div>
+	</div>
+</body>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="/htgl/js/clipboard/clipboard.js"></script>
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/htgl/js/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript" src="/htgl/js/ng-pagination.min.js"></script>
+<script type="text/javascript">
+
+	var app = angular.module('myApp', [ 'ng-pagination' ]);
+	app.controller('bidinfoCtrl', function($scope, $http) {
+		$scope.currentPage = 1;
+		$scope.pageSize = 10;
+		$scope.onPageChange = function() {
+			var param = {
+				'pageSize' : $scope.pageSize,
+				'currentPage' : $scope.currentPage - 1,
+			}
+			$http({
+				method : "POST",
+				params : param,
+				url : "scheme_list"
+			}).success(function(data) {
+				$scope.schemelist = data.data.schemelist;
+				$scope.currentPage = data.data.currentPage+1;
+				$scope.pageCount = data.data.pageCount;
+				$scope.count = data.data.count;
+			});
+		};
+		$scope.onPageChange();
+
+		/*重置*/
+
+		$scope.reset = function() {
+			$scope.searchName = null;
+			 $scope.searchSexStatus= 2;
+			 $scope.searchTypeStatus= 0;
+			 $scope.searchNovelStatus= 0;
+			$scope.searchHotStatus= 0;
+		}
+		/*小说章节列表*/
+		$scope.novel_list = function(id) {
+			window.location.href='/html/scheme/scheme_chapter_list.html?id='+id; 
+		}
+		
+	});
+	
+	
+</script>
+</html>

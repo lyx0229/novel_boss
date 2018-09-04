@@ -1,0 +1,24 @@
+package com.novel.web.upload.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.novel.web.upload.dao.PersonInfoDAO;
+import com.novel.web.upload.entity.PersonInfoPO;
+
+@Service
+public class PersonInfoService {
+	@Autowired
+	PersonInfoDAO personInfoDAO;
+	public PersonInfoPO findPersonInfoPOByBidId(Integer id) {
+		return personInfoDAO.findPersonInfoPOByBidId(id);
+	}
+	
+	public void saveAndFlush(PersonInfoPO po) {
+		personInfoDAO.saveAndFlush(po);
+	}
+
+	public PersonInfoPO findPersonInfoPOById(Integer id) {
+		return personInfoDAO.findOne(id);
+	}
+}

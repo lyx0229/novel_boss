@@ -1,0 +1,96 @@
+package com.novel.web.admin.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Transient;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+
+import com.novel.web.admin.entity.Novel;
+import com.novel.web.admin.entity.NovelDetail;
+import com.novel.web.admin.repository.NovelDetailRepository;
+import com.novel.web.admin.repository.NovelRepository;
+
+@Service
+public class NovelCmsService {
+	@Autowired
+	NovelRepository novelRep;
+	@Autowired
+	NovelDetailRepository novelDetailRep;
+
+	public Novel saveAndUpdate(Novel po) {
+		return novelRep.saveAndFlush(po);
+	}
+	public Novel findNovelById(int id) {
+		return novelRep.findOne(id);
+	}
+
+	public void deleteById(int id) {
+		 novelRep.delete(id);
+	}
+	
+	public void deleteDetailById(int id) {
+		novelDetailRep.delete(id);
+	}
+	public NovelDetail saveAndUpdate(NovelDetail po) {
+		return novelDetailRep.saveAndFlush(po);
+	}
+	public NovelDetail findNovelDetailById(int id) {
+		return novelDetailRep.findOne(id);
+	}
+	
+	public Page<Novel> findNovelByCondition(Novel po, Pageable basicPage) {
+
+		Specification<Novel> specification = new Specification<Novel>() {
+			@Override
+			public Predicate toPredicate(Root<Novel> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+
+				List<Predicate> predicates = new ArrayList<>();
+				if (po.getSex_status() != 2) {
+					predicates.add(cb.equal(root.get("sex_status").as(Integer.class), po.getSex_status()));
+				}
+				if (po.getType_status() != 0) {
+					predicates.add(cb.equal(root.get("type_status").as(Integer.class), po.getType_status()));
+				}
+				if (po.getNovel_state() != 0) {
+					predicates.add(cb.equal(root.get("novel_state").as(Integer.class), po.getNovel_state()));
+				}
+				if (po.getHot_status() != 0) {
+					predicates.add(cb.equal(root.get("hot_status").as(Integer.class), po.getHot_status()));
+				}
+				if (po.getNovel_name() != null && !"".equals(po.getNovel_name())) {
+					predicates.add(cb.like(root.get("novel_name").as(String.class), "%" + po.getNovel_name() + "%"));
+				}
+				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+			}
+		};
+		return novelRep.findAll(specification, basicPage);
+	}
+	
+	public Page<NovelDetail> findNovelDetailByCondition(NovelDetail po, Pageable basicPage) {
+
+		Specification<NovelDetail> specification = new Specification<NovelDetail>() {
+			@Override
+			public Predicate toPredicate(Root<NovelDetail> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				List<Predicate> predicates = new ArrayList<>();
+				predicates.add(cb.equal(root.get("novel_id").as(Long.class), po.getNovel_id()));
+				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+			}
+		};
+		return novelDetailRep.findAll(specification, basicPage);
+	}
+	@Transient
+	public Novel updateNovelAndNovelDetail(NovelDetail po, Novel novel) {
+		novelDetailRep.saveAndFlush(po);
+		return novelRep.saveAndFlush(novel);
+	}
+}

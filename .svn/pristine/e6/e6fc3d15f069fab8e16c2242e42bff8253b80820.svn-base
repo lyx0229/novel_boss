@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="js/html5shiv.js"></script>
+<script type="text/javascript" src="js/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/ng-pagination.min.css" />
+<title>投标记录</title>
+<style type="text/css">
+body {
+	padding: 20px 0 0 20px;
+}
+
+.pager {
+	margin: 20px;
+	text-align: right;
+}
+</style>
+</head>
+
+<body>
+	<div ng-app="myApp" ng-controller="bidinfoCtrl">
+		<nav class="breadcrumb">
+			<i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>
+			理财管理<span class="c-gray en">&gt;</span> 投标记录 <a
+				class="btn btn-success radius r"
+				style="line-height: 1.6em; margin-top: 3px"
+				href="javascript:location.replace(location.href);" title="刷新"><i
+				class="Hui-iconfont">&#xe68f;</i></a>
+		</nav>
+		<div class="page-container">
+			<div class="text-c">
+				出借人ID <input type="text" class="input-text" style="width: 250px"
+					ng-model="searchName">
+				<button type="submit" class="btn btn-success radius"
+					ng-click="onPageChange()">
+					<i class="Hui-iconfont">&#xe665;</i> 查询
+				</button>
+				<button type="submit" class="btn btn-success radius"
+					ng-click="reset()">重置</button>
+			</div>
+			<div class="mt-20">
+				<table
+					class="table table-border table-bordered table-hover table-bg table-sort">
+					<thead>
+						<tr class="text-c">
+							<th width="80">序号</th>
+							<th width="80">ID</th>
+							<th width="100">出借人ID</th>
+							<th width="90">投资金额</th>
+							<th width="90">应收本金</th>
+							<th width="90">应收利息</th>
+							<th width="90">还款方式</th>
+							<th width="130">投资时间</th>
+							<th width="130">到期日期</th>
+							<th width="90">到期状态</th>
+							<th width="100">操作</th>
+						</tr>
+					</thead>
+					<tbody ng-repeat="po in investlist">
+						<tr class="text-c">
+							<td>{{$index+1}}</td>
+							<td>{{po.id}}</td>
+							<td>{{po.investor}}</td>
+							<td>{{po.investAmount}}</td>
+							<td>{{po.recivedPrincipal}}</td>
+							<td>{{po.recievedInterest}}</td>
+							<td>
+							<div ng-if="po.isAutoBid=='1'">按月结息</div>
+							<div ng-if="po.isAutoBid=='0'">一次还本</div>
+							</td>
+							<td>{{po.investTime | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+							<td>{{po.repayDate | date:'yyyy-MM-dd'}}</td>
+							<td>
+							<div ng-if="po.repayStatus==1">未到期</div>
+							<div ng-if="po.repayStatus==2">已到期</div>
+							</td>
+							<td class="td-manage">
+								<button type="submit" class="loan_button btn btn-success radius" ng-click="download($index)">下载借款合同</button>
+							</td>
+						</tr>
+
+					</tbody>
+
+				</table>
+
+			</div>
+		</div>
+		<div class="div" type="text-align:right;">
+			<div class="col-md-12">
+				<div class="dataTables_info">
+					共 {{count}}条记录，每页 {{pageSize}} 条，当前第 {{currentPage}} /
+					{{pageCount}}</font> 页
+				</div>
+			</div>
+		</div>
+		<div class="pager">
+			<pager page-count="pageCount" current-page="currentPage"
+				on-page-change="onPageChange()" first-text="首页" next-text="下一页"
+				prev-text="上一页" last-text="尾页"></pager>
+		</div>
+	</div>
+</body>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/htgl/js/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript" src="/htgl/js/ng-pagination.min.js"></script>
+<script type="text/javascript">
+	var app = angular.module('myApp', [ 'ng-pagination' ]);
+	app.controller('bidinfoCtrl', function($scope, $http) {
+		$scope.currentPage = 1;
+		$scope.pageSize = 15;
+		$scope.onPageChange = function() {
+			var param = {
+				'pageSize' : $scope.pageSize,
+				'currentPage' : $scope.currentPage - 1,
+				'searchName' : $scope.searchName,
+			}
+			$http({
+				method : "POST",
+				params : param,
+				url : "investlist"
+			}).success(function(data) {
+				$scope.investlist = data.investlist.content;
+				$scope.pageCount = data.investlist.totalPages;
+				$scope.currentPage = data.investlist.number + 1;
+				$scope.count = data.investlist.totalElements;
+			});
+		};
+
+		$scope.onPageChange();
+
+		/*重置*/
+
+		$scope.reset = function() {
+			$scope.searchName = null;
+		}
+
+		
+		
+		
+		$scope.download =function (index){
+		    downloadTemplate('/wordexport/lend_out', 'id', $scope.investlist[index].id);
+		}
+
+		/**
+		 * @param action action映射地址
+		 * @param type parameter的名称
+		 * @param value parameter的值，这里为file的filename
+		 */
+		function downloadTemplate(action, id, value){
+		    var form = document.createElement('form');
+		    document.body.appendChild(form);
+		    form.style.display = "none";
+		    form.action = action;
+		    form.id = 'excel';
+		    form.method = 'get';
+		    
+		    var newElement = document.createElement("input");  
+		    newElement.setAttribute("type","hidden");  
+		    newElement.name = id;
+		    newElement.value = value;
+		    form.appendChild(newElement); 
+		    
+		    form.submit();
+		}
+	});
+</script>
+</html>

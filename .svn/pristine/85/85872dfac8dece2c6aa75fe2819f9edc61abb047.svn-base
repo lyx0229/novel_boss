@@ -1,0 +1,29 @@
+package com.novel.web.upload.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.novel.web.upload.dao.UploadFileInfoDAO;
+import com.novel.web.upload.entity.UploadFileInfoPO;
+
+@Service
+public class UploadFileInfoService {
+	@Autowired
+	UploadFileInfoDAO uploadFileInfoDAO;
+
+	public List<UploadFileInfoPO> findUploadFileInfoPOByProjectId(Long project_id) {
+
+		return uploadFileInfoDAO.findUploadFileInfoPOByProjectId(project_id);
+	}
+
+	public void saveAndFlush(UploadFileInfoPO po) {
+		uploadFileInfoDAO.saveAndFlush(po);
+	}
+
+	public UploadFileInfoPO findUploadFileInfoPOById(Integer id) {
+
+		return uploadFileInfoDAO.findOne(id);
+	}
+}

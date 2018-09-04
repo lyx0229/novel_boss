@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+<title>查看用户</title>
+<meta name="keywords"
+	content="H-ui.admin v3.1,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description"
+	content="H-ui.admin v3.1，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+	<div ng-app="myApp" ng-controller="userViewCtrl">
+		<article class="page-container">
+			<form class="form form-horizontal" id="form-admin-add">
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>姓名：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						{{userPO.userName}}
+						<input type="hidden" class="input-text" ng-model="userPO.id" >
+						<input type="hidden" class="input-text" ng-model="userPO.passWord">
+						<input type=hidden class="input-text" ng-model="userPO.userIp">
+						<input type=hidden class="input-text" ng-model="userPO.dataStatus">
+						<input type=hidden class="input-text" ng-model="userPO.createUserid">
+						<input type=hidden class="input-text" ng-model="userPO.createTime">
+						<input type=hidden class="input-text" ng-model="userPO.loginTime">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>手机：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						{{userPO.phoneNum}}
+					</div>
+				</div>
+				
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>角色：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<div class="cl permission-list2">
+							<ul ng-repeat="rolePO in roleOpinionList">
+								<li class="form-label col-xs-4 col-sm-3" style="text-align: left;">
+								 <input disabled="disabled" type="checkbox" id={{rolePO.id}} name="{{rolePO.roleName}}" ng-checked="isSelected(rolePO.id)" ng-click="updateSelection($event,rolePO.id)">
+                     {{rolePO.roleName }}
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3">备注：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						{{userPO.remark}}
+					</div>
+				</div>
+			</form>
+		</article>
+	</div>
+	<!--/请在上方写此页面业务相关的脚本-->
+</body>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript">
+var app = angular.module('myApp', []);
+
+app.controller('userViewCtrl', function($scope, $http) {
+	 $scope.selected = [];
+     $scope.selectedTags = [];
+	
+	$scope.GetUrlPara=function ()
+	{
+		　　var url = document.location.toString();
+		　　var arrUrl = url.split("?");
+		　　var para = arrUrl[1];
+		　　return para;
+		} 
+	
+
+	$scope.roleList = function() {
+		$http({
+			method : "POST",
+			params : '',
+			url : "/role/roleOpinionList"
+		}).success(function(data) {
+			$scope.roleOpinionList=data.roleOpinionList;
+		});
+	}
+	$scope.roleList();
+	
+	
+	$scope.getUserInfo = function(){
+		Request = $scope.GetUrlPara();  
+		var userid=$scope.GetUrlPara().split("=")[1];
+		var param={'userid':userid}
+		$http({
+			method : "POST",
+			params : param,
+			url : "/user/editUser"
+		}).success(function(data) {
+			$scope.userPO=data.userPO;
+			//复选框回显
+			var rolist=data.userPO.roleList;
+			angular.forEach(rolist, function(data){
+				$scope.selected.push(data.id);
+				});
+			//----------------------------
+		});
+	};
+	
+	
+	$scope.getUserInfo();
+	
+	
+	 
+    var updateSelected = function(action,id,name){
+        if(action == 'add' && $scope.selected.indexOf(id) == -1){
+            $scope.selected.push(id);
+            $scope.selectedTags.push(name);
+        }
+        if(action == 'remove' && $scope.selected.indexOf(id)!=-1){
+            var idx = $scope.selected.indexOf(id);
+            $scope.selected.splice(idx,1);
+            $scope.selectedTags.splice(idx,1);
+        }
+    }
+    
+    $scope.updateSelection = function($event, id){
+        var checkbox = $event.target;
+        var action = (checkbox.checked?'add':'remove');
+        updateSelected(action,id,checkbox.name);
+    }
+    
+    $scope.isSelected = function(id){
+        return $scope.selected.indexOf(id)>=0;
+    }
+	
+});
+
+</script>
+</html>

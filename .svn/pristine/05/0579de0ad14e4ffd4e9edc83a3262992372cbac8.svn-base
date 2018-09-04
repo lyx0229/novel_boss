@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+</head>
+<body>
+<div ng-app="myApp" ng-controller="bidinfoCtrl">
+<div class="panel user-group-widget">
+	<div class="panel-body panel-scroller pn" style="max-height: 600px;">
+		<div  id="sc_content">
+		     <div class="tab-block mb25" style="width: 95%;margin: auto;margin-top: 10px;">
+		     <button  type="submit" class="loan_button btn btn-success radius" ng-click="add_data()">添加</button>
+			  <div class="tab-content">
+			    <div id="tab12_1" class="tab-pane active">
+			    <form method="post" id="uploadForm" enctype="multipart/form-data">  
+				   </form>
+			    </div>
+			  </div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="updateLoanSuper" style="display: none;">
+         <div class="modal-backdrop fade in"></div>
+        <div class="bootbox modal fade in" tabindex="-1" role="dialog" aria-hidden="false" style="display: block;">
+            <div class="modal-dialog" style="padding-top: 8%;">
+                <div class="modal-content" >
+                    <div class="modal-header">
+                        <button type="button" class="bootbox-close-button close" onclick="$('#updateLoanSuper').hide()">×</button>
+                    </div>
+                    <div class="modal-body">
+					  <div class="col-md-12 " >           
+					         <form method="post" id="updateLoansuperform" enctype="multipart/form-data" >  
+					          <div class="col-md-6">
+					            <label class="col-md-3 control-label">资料名称
+					              <span class="required">：</span></label>
+					                <div class="col-md-9">
+					                  <input type="text" id="title2" name="title2" class="wid100Inp">
+					                  <input type="hidden" id="loansuperid2" name="loansuperid2" class="wid100Inp">
+					                  <input type="hidden" id="project_id" name="project_id"class="wid100Inp" >
+					                  <input type="hidden" id="file_id" name="file_id"class="wid100Inp" >
+					                  </div>
+					                  <div style="clear: both;"></div>
+					          </div>
+					          <div class="col-md-6">
+					            <label class="col-md-3 control-label">上传图片
+					              <span class="required">：</span></label>
+					                <div class="col-md-9">
+					                  <input class="wid100Inp" type="file" id="logo2" name="file"  onchange="javascript:setLoGoImagePreviewUp();">
+					                  <p><div id="localImag2"><img id="preview2" src="/htgl/img/upload.png" class="img-responsive img-circle"  alt="Cinque Terre" width="100px" height="100px"/></div></p>
+					                 </div>
+					                  <div style="clear: both;"></div>
+					           </div>
+					           <div class="col-md-6" id="has-rec_id">
+					            <label class="col-md-3 control-label">是否显示
+					              <span class="required">：</span></label>
+					                <div class="col-md-9">
+					                  <select class="form-control" name="isputaway2" id="isputaway2" >
+                                      <option value="1" selected="selected">
+                                        是
+                                      </option>
+                                      <option value="2">
+                                        否
+                                      </option>
+                               	  		</select>
+					                 </div>
+					                  <div style="clear: both;"></div>
+					           </div>
+					           
+					     <input data-bb-handler="main" type="button"  class="btn btn-primary" value="上传" onclick="UpladFile()"/>
+                         <button data-bb-handler="main" type="button" class="btn btn-primary" onclick="$('#updateLoanSuper').hide()">关闭</button>
+					        </form>                        
+					    </div>
+					</div>
+                    
+                </div>
+            </div>
+        </div>
+   </div>
+</div>
+</body>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/htgl/js/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript" src="/htgl/js/ng-pagination.min.js"></script>
+<script type="text/javascript" src="/htgl/js/upload_file.js"></script>
+<script>
+
+var filelist = new Array(); 
+var app = angular.module('myApp', [ 'ng-pagination' ]);
+app.controller('bidinfoCtrl', function($scope, $http) {
+   
+	$scope.GetUrlPara=function ()
+	{
+		　　var url = document.location.toString();
+		　　var arrUrl = url.split("?");
+		　　var para = arrUrl[1];
+		　　return para;
+		} 
+	
+	$scope.load_data= function()
+	{
+		Request = $scope.GetUrlPara();  
+		var id=$scope.GetUrlPara().split("=")[1];
+		
+	  var param = {
+				'id' : id
+			}
+			$http({
+				method : "POST",
+				params : param,
+				url : "/upload/query_upload_file"
+			}).success(function(data) {
+				  $("#uploadForm").html("");
+				  var list = data.list;
+				  filelist=data.list;
+				  var html_="";
+				  for(var i=0;i<list.length;i++)
+				  {
+					  html_ += "<div class='col-xs-3'><img src='http://img.lvzbao.com"+list[i].imgPath+"' onclick='minus("+i+")' class='user-avatar' width='100px' height='100px'>";
+					  html_ +="<div class='caption'><h5>"+list[i].imgname+" <br> </h5></div></div>";
+				  }
+					$("#uploadForm").append(html_);
+			});
+   }  ;
+   $scope.load_data();
+   
+   $scope.add_data=function() {
+		Request = $scope.GetUrlPara();  
+		var id=$scope.GetUrlPara().split("=")[1];
+		$("#project_id").val(id);
+		$("#file_id").val("");
+		 $("#title2").val("");
+  	     $("#preview2").attr("src","");
+		$("#updateLoanSuper").show();
+				  
+	}
+   
+   $scope.click=function() {
+	   alert("请输入上传的材料名称");
+	     return;
+				  
+	}
+});
+
+
+     function minus(i) {  
+    	 if(filelist!=""){
+    		 $("#file_id").val(filelist[i].id);
+    		 $("#title2").val(filelist[i].imgname);
+       	     $("#isputaway2").val(filelist[i].isShow);
+       	     $("#preview2").attr("src","http://img.lvzbao.com"+filelist[i].imgPath);
+    	 }
+    	 $("#updateLoanSuper").show();
+        };  
+        //图片上传
+        var xhr;
+        //上传文件方法
+        function UpladFile() {
+            var url = "/upload/upload_file"; // 接收上传文件的后台地址
+            var form = new FormData(document.getElementById('updateLoansuperform')); // FormData 对象
+            var file =document.getElementById('logo2');
+            if(file.files.length==0){
+            	alert("上传文件不能为空");
+            	return;
+            }
+            
+            xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
+            xhr.open("post", url, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
+            xhr.onload = uploadComplete; //请求完成
+//             xhr.onerror =  uploadFailed; //请求失败
+//             xhr.upload.onprogress = progressFunction;//【上传进度调用方法实现】
+            xhr.upload.onloadstart = function(){//上传开始执行方法
+                ot = new Date().getTime();   //设置上传开始时间
+                oloaded = 0;//设置上传开始时，以上传的文件大小为0
+            };
+            xhr.send(form); //开始上传，发送form数据
+        }
+        
+        function uploadComplete() {
+        	location.reload();
+            }
+        
+    </script>

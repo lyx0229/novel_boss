@@ -1,0 +1,4 @@
+#礼物图片路径
+GOODS_IMG=D://book//goods//
+#充值模板图片路径
+RECHARGE_IMG=D://book//recharge//

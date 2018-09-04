@@ -1,0 +1,262 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+<title>添加企业用户</title>
+<meta name="keywords"
+	content="H-ui.admin v3.1,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description"
+	content="H-ui.admin v3.1，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+
+</head>
+<body>
+	<div ng-app="myApp" ng-controller="bidaddCtrl">
+		<article class="page-container">
+			<form class="form form-horizontal" id="form-admin-add">
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>企业名称：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="enterprise">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>法人手机号：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="mobile">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>密码：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="password">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>密码确认：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="password1">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>开户银行许可证核准号：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="approvalNo">
+					</div>
+				</div>
+				
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>法人姓名：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="userName">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>法人身份证号：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="userIde">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3">组织机构代码：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="organizationCode">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"></span>营业执照编号：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="charterNo">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3">税务登记号：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="taxationNo">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3">统一社会信用代码：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="creditNo">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3">机构信用代码：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="orCreditNo">
+					</div>
+				</div>
+				
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>企业对公账号：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="publicAccount">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>企业联系人：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model=contact>
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>企业联系人手机号：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="contactMoblie">
+					</div>
+				</div>
+				<div class="row cl">
+					<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+						<button type="submit" class="btn btn-success radius"
+							ng-click="submit()">&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+					</div>
+				</div>
+			</form>
+		</article>
+	</div>
+	<!--/请在上方写此页面业务相关的脚本-->
+</body>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript">
+	var app = angular.module('myApp', []);
+	app.controller('bidaddCtrl', function($scope, $http) {
+
+		$scope.submit = function() {
+			
+			if ($scope.enterprise == null|| $scope.enterprise == '') {
+				alert('企业名称不能为空');
+				return;
+			}
+			if ($scope.password == null|| $scope.password == '') {
+				alert('密码不能为空');
+				return;
+			}
+			if ($scope.password1 == null|| $scope.password1 == '') {
+				alert('确认密码不能为空');
+				return;
+			}
+			if($scope.password!=$scope.password1){
+				alert("两次密码输入不一致!");
+				return;
+			}
+			if ($scope.approvalNo == null|| $scope.approvalNo == '') {
+				alert('开户银行许可证核准号不能为空');
+				return;
+			}
+			if ($scope.mobile == null|| $scope.mobile == '') {
+				alert('法人手机号不能为空');
+				return;
+			}
+			if ($scope.userName == null|| $scope.userName == '') {
+				alert('法人姓名不能为空');
+				return;
+			}
+			if ($scope.userIde == null|| $scope.userIde == '') {
+				alert('法人身份证号不能为空');
+				return;
+			}
+			if ($scope.publicAccount == null|| $scope.publicAccount == '') {
+				alert('企业对公账号不能为空');
+				return;
+			}
+			if ($scope.contact == null|| $scope.contact == '') {
+				alert('企业对公账号不能为空');
+				return;
+			}
+			if ($scope.publicAccount == null|| $scope.publicAccount == '') {
+				alert('企业联系人不能为空');
+				return;
+			}
+			if ($scope.contactMoblie == null|| $scope.contactMoblie == '') {
+				alert('企业联系人手机号不能为空');
+				return;
+			}
+			var param = {
+				'enterprise': $scope.enterprise,//企业名称
+				'password': $scope.password,//密码
+				'approvalNo': $scope.approvalNo,//开户银行许可证核准号
+				'mobile': $scope.mobile,//法人手机号
+				'userName': $scope.userName,//法人姓名
+				'userIde': $scope.userIde,//法人身份证号
+				'organizationCode': $scope.organizationCode,//组织机构代码
+				'charterNo': $scope.charterNo,//营业执照编号
+				'taxationNo': $scope.taxationNo,//税务登记号
+				'creditNo': $scope.creditNo,//统一社会信用代码
+				'orCreditNo': $scope.orCreditNo,//机构信用代码
+				'publicAccount': $scope.publicAccount,//企业对公账号
+				'contact': $scope.contact,//企业联系人
+				'contactMoblie': $scope.contactMoblie//企业联系人手机号
+// 				'bankCode': $scope.bankCode//银行编码
+			}
+			$http({
+				method : "POST",
+				params : param,
+				url : "/financial/addEnterprise"
+			}).success(function(data) {
+				if (data.code == '0000') {
+					alert(data.msg);
+				} else {
+					alert(data.msg);
+					if(data.backUrl!=null && data.backUrl!=''){
+					window.location.href=data.backUrl;
+					}
+				}
+			});
+		};
+		$scope.member_add = function(url) {
+			var title = '添加企业用户';
+			var w = '';
+			var h = '700';
+			layer_show(title, url, w, h);
+		}
+		
+		$scope.isNumber=function(val){
+		    var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+		    if(regPos.test(val)){
+		        return true;
+		    }else{
+		        return false;
+		    }
+		}
+	});
+</script>
+</html>

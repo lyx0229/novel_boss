@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="js/html5shiv.js"></script>
+<script type="text/javascript" src="js/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/ng-pagination.min.css" />
+<title>充值明细</title>
+<style type="text/css">
+body {
+	padding: 20px 0 0 20px;
+}
+.wrap{
+    width: 150px; /* //设置需要固定的宽度 */
+    white-space: nowrap; /* //不换行 */
+    text-overflow: ellipsis; /* //超出部分用....代替 */
+   overflow: hidden;/*   //超出隐藏 */
+    }
+.pager {
+	margin: 20px;
+	text-align: right;
+}
+</style>
+</head>
+
+<body>
+	<div ng-app="myApp" ng-controller="bidinfoCtrl">
+		<nav class="breadcrumb">
+			<i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>
+			业务管理<span class="c-gray en">&gt;</span> 充值明细 <a
+				class="btn btn-success radius r"
+				style="line-height: 1.6em; margin-top: 3px"
+				href="javascript:location.replace(location.href);" title="刷新"><i
+				class="Hui-iconfont">&#xe68f;</i></a>
+		</nav>
+		<div class="page-container">
+			<div class="text-c">
+				用户ID<input type="text" class="input-text" style="width: 150px"
+					ng-model="searchName">
+				订单号 <input type="text" class="input-text" style="width: 150px"
+					ng-model="searchOrderNo">
+				  	 支付结果
+	            <span class="select-box" style="width: 150px;"> <select
+							class="select" ng-model="searchResult" >
+							<option value="0">--请选择--</option>
+							<option ng-repeat="x in result_status" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>		
+					
+					投标时间：
+		     <input type="text" onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}' })" id="datemin"  class="input-text Wdate" style="width:120px;">
+		     -
+		     <input type="text"  onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d' })" id="datemax" class="input-text Wdate" style="width:120px;">
+				<button type="submit" class="btn btn-success radius"
+					ng-click="onPageChange()">
+					<i class="Hui-iconfont">&#xe665;</i> 查询
+				</button>
+				<button type="submit" class="btn btn-success radius"
+					ng-click="reset()">重置</button>
+			</div>
+			<div class="mt-20">
+				<table
+					class="table table-border table-bordered table-hover table-bg table-sort">
+					<thead>
+						<tr class="text-c">
+							<th width="50">序号</th>
+							<th width="50">用户ID</th>
+							<th width="100">充值金额(元)</th>
+							<th width="100">价值书豆</th>
+							<th width="100">赠送书豆</th>
+							<th width="100">处理结果</th>
+							<th width="130">订单号</th>
+							<th width="130">交易时间</th>
+							<th width="130">回调时间</th>
+							<th width="130">返回状态码</th>
+							<th width="130">返回信息</th>
+						</tr>
+					</thead>
+					<tbody ng-repeat="po in detaillist">
+						<tr class="text-c">
+							<td>{{$index+1}}</td>
+							<td>{{po.user_id}}</td>
+							<td>{{po.recharge_money}}</td>
+							<td>{{po.book_peas}}</td>
+							<td>{{po.pre_book_peas}}</td>
+							<td>
+							<div ng-if="po.result=='0'">未支付</div>
+							<div ng-if="po.result=='1'">已支付</div>
+							<div ng-if="po.result=='2'">支付失败</div>
+							<div ng-if="po.result=='3'">支付正在处理中</div>
+							</td>
+							<td>{{po.order_no}}</td>
+							<td>{{po.recharge_time | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+							<td>{{po.result_time | date:'yyyy-MM-dd HH:mm:ss '}}</td>
+							<td>{{po.result_code}}</td>
+							<td>{{po.result_info}}</td>
+						</tr>
+
+					</tbody>
+
+				</table>
+
+			</div>
+		</div>
+		<div class="div" type="text-align:right;">
+			<div class="col-md-12">
+				<div class="dataTables_info">
+					共 {{count}}条记录，每页 {{pageSize}} 条，当前第 {{currentPage}} /
+					{{pageCount}}</font> 页
+				</div>
+			</div>
+		</div>
+		<div class="pager">
+			<pager page-count="pageCount" current-page="currentPage"
+				on-page-change="onPageChange()" first-text="首页" next-text="下一页"
+				prev-text="上一页" last-text="尾页"></pager>
+		</div>
+	</div>
+</body>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/htgl/js/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript" src="/htgl/js/ng-pagination.min.js"></script>
+<script type="text/javascript">
+	var app = angular.module('myApp', [ 'ng-pagination' ]);
+	app.controller('bidinfoCtrl', function($scope, $http) {
+		$scope.currentPage = 1;
+		$scope.pageSize = 15;
+		$scope.onPageChange = function() {
+			var param = {
+				'pageSize' : $scope.pageSize,
+				'currentPage' : $scope.currentPage - 1,
+				'searchName' : $scope.searchName,
+				'searchResult' : $scope.searchResult,
+				'searchOrderNo' : $scope.searchOrderNo,
+				'datemin': $("#datemin").val(),
+				'datemax': $("#datemax").val(),
+			}
+			$http({
+				method : "POST",
+				params : param,
+				url : "/business/recharge_detail_list"
+			}).success(function(data) {
+				$scope.detaillist = data.data.detaillist.content;
+				$scope.pageCount = data.data.detaillist.totalPages;
+				$scope.currentPage = data.data.detaillist.number + 1;
+				$scope.count = data.data.detaillist.totalElements;
+			});
+		};
+		$scope.onPageChange();
+
+		$scope.result_status = [
+		    {site : "未支付", code : "0"},
+		    {site : "已支付", code : "1"},
+		    {site : "支付失败", code : "2"},
+		    {site : "支付正在处理中", code : "3"}
+		];
+		/*重置*/
+
+		$scope.reset = function() {
+			$scope.searchName = null;
+			$scope.searchResult = null;
+			$scope.searchOrderNo = null;
+			$("#datemin").val(null);
+			$("#datemax").val(null);
+		}
+
+		/*添加小说*/
+		$scope.member_add = function(id) {
+			var title = '添加小说';
+			var url = '/html/novel/novel_add.html?id='+id;
+			var w = '';
+			var h = '700';
+			layer_show(title, url, w, h);
+		}
+	});
+	
+	
+</script>
+</html>

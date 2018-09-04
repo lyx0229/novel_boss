@@ -1,0 +1,103 @@
+package com.novel.web.boss.common.shiro;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.novel.web.boss.common.constants.Constant;
+import com.novel.web.boss.common.utils.CommonUtils;
+import com.novel.web.boss.entity.PermissionPO;
+import com.novel.web.boss.entity.RolePO;
+import com.novel.web.boss.entity.UserPO;
+import com.novel.web.boss.service.impl.UserRoleRelationServiceImpl;
+import com.novel.web.boss.service.impl.UserServiceImpl;
+public class ShiroRealm extends AuthorizingRealm {
+
+	private static final Logger logger = LoggerFactory.getLogger(ShiroRealm.class);
+
+	@Autowired
+	private UserServiceImpl userService;
+
+	@Autowired
+	private UserRoleRelationServiceImpl UserRoleRelationService;
+	
+	/**
+	 * 授权
+	 */
+	@Override
+	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+		if (principals != null && !principals.isEmpty()) {
+			logger.info("doGetAuthorizationInfo +" + principals.getPrimaryPrincipal().toString());
+		}
+		String username = principals.getPrimaryPrincipal().toString();
+		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+		List<RolePO> list = UserRoleRelationService.findRoleByUserName(username);
+		Set<RolePO> roleSet = new HashSet<RolePO>();
+		roleSet.addAll(list);
+		// 角色名的集合
+		Set<String> roles = new HashSet<String>();
+		// 权限名的集合
+		Set<String> permissions = new HashSet<String>();
+		Iterator<RolePO> it = roleSet.iterator();
+		while (it.hasNext()) {
+			roles.add(it.next().getRoleName());
+			for (PermissionPO per : it.next().getPerList()) {
+				permissions.add(per.getPerName());
+			}
+		}
+		// 设置角色
+		info.setRoles(roles);
+		// 设置权限
+		info.setStringPermissions(permissions);
+		return info;
+	}
+
+	/**
+	 * 登陆认证
+	 */
+	@Override
+	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+		logger.info("doGetAuthenticationInfo +" + token.toString());
+		UsernamePasswordToken upToken = (UsernamePasswordToken) token;
+		char[] byt=Constant.md5_key.toCharArray();
+		upToken.setPassword(CommonUtils.byteMerger(upToken.getPassword(),byt));
+		String userName = upToken.getUsername();
+		System.out.println(
+				"验证当前Subject时获取到token为" + ReflectionToStringBuilder.toString(token, ToStringStyle.MULTI_LINE_STYLE));
+		// 从数据库中获取还用户名对应的user
+		UserPO user = userService.findByPhone(upToken.getUsername());
+		if (null == user) {
+			 return null;
+		}else {
+			Subject subject = SecurityUtils.getSubject();  
+			Session session = subject.getSession(); 
+			session.setAttribute("userInfo", user);
+			// 更新登录时间 last login time
+			user.setLoginTime(new Date());
+			user.setUserIp(upToken.getHost());
+			userService.updateUserPOById(user);
+			return new SimpleAuthenticationInfo(userName, user.getPassWord(), getName());
+	}
+
+}
+}

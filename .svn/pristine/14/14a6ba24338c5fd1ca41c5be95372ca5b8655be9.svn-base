@@ -1,0 +1,270 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+<title>添加小说</title>
+<meta name="keywords"
+	content="H-ui.admin v3.1,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description"
+	content="H-ui.admin v3.1，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+
+</head>
+<body>
+	<div ng-app="myApp" ng-controller="bidaddCtrl">
+		<article class="page-container">
+			<form class="form form-horizontal" id="form-admin-add">
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>小说名称：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="novelPO.novel_name">
+						<input type="hidden" class="input-text" ng-model="novelPO.id">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>图片地址：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="novelPO.novel_imgurl">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3">简介：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<textarea name="" cols="" rows="" class="textarea"
+							dragonfly="true" ng-model="novelPO.novel_brief"></textarea>
+						<p class="textarea-numberbar">
+							<em class="textarea-length">0</em>/300
+						</p>
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>作者：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text"
+							ng-model="novelPO.novel_author">
+					</div>
+					
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>男频/女频：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<span class="select-box" style="width: 150px;"> <select 
+							class="select" ng-model="novelPO.sex_status" >
+							<option value="">--请选择--</option>
+							<option ng-repeat="x in sex_status" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>
+					</div>
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>分类：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<span class="select-box" style="width: 150px;"> <select 
+							class="select" ng-model="novelPO.type_status" >
+							<option value="">--请选择--</option>
+							<option ng-repeat="x in type_status" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>
+					</div>
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>状态：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<span class="select-box" style="width: 150px;"> <select 
+							class="select" ng-model="novelPO.novel_state" >
+							<option value="">--请选择--</option>
+							<option ng-repeat="x in novel_state" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>
+					</div>
+					<label class="form-label col-xs-4 col-sm-3">榜单：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<span class="select-box" style="width: 150px;"> <select 
+							class="select" ng-model="novelPO.hot_status" >
+							<option value="">--请选择--</option>
+							<option ng-repeat="x in hot_status" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>最新章节：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="novelPO.novel_new_chapter">
+					</div>
+				</div>
+				<div class="row cl">
+					<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+						<button type="submit" class="btn btn-success radius"
+							ng-click="submit()">&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+					</div>
+				</div>
+			</form>
+		</article>
+	</div>
+	<!--/请在上方写此页面业务相关的脚本-->
+</body>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript">
+	var app = angular.module('myApp', []);
+	app.controller('bidaddCtrl', function($scope, $http) {
+
+		
+		
+		$scope.GetUrlPara=function ()
+		{
+			　　var url = document.location.toString();
+			　　var arrUrl = url.split("?");
+			　　var para = arrUrl[1];
+			　　return para;
+			} 
+		
+		$scope.getPerInfo = function(){
+			Request = $scope.GetUrlPara();  
+			var id=$scope.GetUrlPara().split("=")[1];
+			if (typeof id == 'undefined' || id == null ||id == 'undefined')
+				return ;
+			var param={'id':id}
+			$http({
+				method : "POST",
+				params : param,
+				url : "/novel/get_novel"
+			}).success(function(data) {
+				$scope.novelPO=data.data;
+			});
+		};
+		
+		$scope.submit = function() {
+
+			if (typeof $scope.novelPO == 'undefined'
+					|| $scope.novelPO == null
+					|| $scope.novelPO.novel_name == null
+					|| $scope.novelPO.novel_name == '') {
+				alert('小说名不能为空');
+				return;
+			}
+			if ($scope.novelPO.novel_imgurl == null
+					|| $scope.novelPO.novel_imgurl == '') {
+				alert('图片路径不能为空');
+				return;
+			}
+			if ($scope.novelPO.novel_brief == null
+					|| $scope.novelPO.novel_brief == '') {
+				alert('简介不能为空');
+				return;
+			}
+			if ($scope.novelPO.novel_author == null || $scope.novelPO.novel_author == '') {
+				alert('作者不能为空');
+				return;
+			}
+			if ($scope.novelPO.sex_status == null || $scope.novelPO.sex_status == '') {
+				alert('男频/女频不能为空');
+				return;
+			}
+			if ($scope.novelPO.type_status == null || $scope.novelPO.type_status == '') {
+				alert('分类不能为空');
+				return;
+			}
+			if ($scope.novelPO.novel_state == null || $scope.novelPO.novel_state == '') {
+				alert('连载状态不能为空');
+				return;
+			}
+			if ($scope.novelPO.novel_new_chapter == null || $scope.novelPO.novel_new_chapter == '') {
+				alert('最新章节不能为空');
+				return;
+			}
+			var param = {
+				"novelPO" : JSON.stringify($scope.novelPO)
+			}
+			$http({
+				method : "POST",
+				params : param,
+				url : "/novel/add_novel"//  
+			}).success(function(data) {
+				if (data.status == '0') {
+					alert(data.desc);
+				} else {
+					alert(data.desc);
+					window.parent.location.reload(); //刷新父页面
+					var index = parent.layer.getFrameIndex(window.name);
+					parent.layer.close(index);
+				}
+			});
+		};
+
+		$scope.sex_status = [
+		    {site : "女频", code : "1"},
+		    {site : "男频", code : "0"}
+		];
+		$scope.novel_state = [
+		    {site : "连载中", code : "1"},
+		    {site : "已完成", code : "2"}
+		];
+		$scope.hot_status = [
+		    {site : "滚动列表", code : "1"},
+		    {site : "本周主打", code : "2"},
+		    {site : "新书试读", code : "3"},
+		    {site : "连载更新", code : "4"},
+		    {site : "人气推荐", code : "5"}
+		];
+		$scope.type_status = [
+		    {site : "奇幻玄幻", code : "1"},
+		    {site : "武侠仙侠", code : "2"},
+		    {site : "都市言情", code : "3"},
+		    {site : "历史穿越", code : "4"},
+		    {site : "官场军事", code : "5"},
+		    {site : "都市异能", code : "6"},
+		    {site : "惊悚恐怖", code : "7"},
+		    {site : "豪门总裁", code : "8"},
+		    {site : "古代言情", code : "9"},
+		    {site : "现代言情", code : "10"},
+		    {site : "穿越重生", code : "11"},
+		    {site : "耿美百合", code : "12"},
+		    {site : "惊悚恐怖", code : "13"}
+		];
+		
+	
+		
+		$scope.isNumber=function(val){
+		    var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+// 		    var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+		    if(regPos.test(val)){
+		        return true;
+		    }else{
+		        return false;
+		    }
+		}
+		
+		$scope.getPerInfo();
+	});
+</script>
+</html>

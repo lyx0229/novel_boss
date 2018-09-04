@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+<title>添加章节</title>
+<meta name="keywords"
+	content="H-ui.admin v3.1,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description"
+	content="H-ui.admin v3.1，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+
+</head>
+<body>
+	<div ng-app="myApp" ng-controller="bidaddCtrl">
+		<article class="page-container">
+			<form method="post" id="updateLoansuperform" >  
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>章节名称：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" name="chapter_name" ng-model="po.chapter_name">
+						<input type="hidden" class="input-text"  ng-model="po.novel_id">
+						<input ng-show="false" class="input-text" name="novel_id" ng-model="novel_id">
+						<input ng-show="false" class="input-text" name="id"  ng-model="po.id">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>收费状态：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<span class="select-box" style="width: 150px;"> <select  name="free_state" 
+							class="select" ng-model="po.free_state" >
+							<option ng-repeat="x in free_status" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>
+					</div>
+				</div>
+				<div class="row cl">
+					            <label class="form-label col-xs-4 col-sm-3">上传文件
+					              <span class="required">：</span></label>
+					                <div class="formControls col-xs-8 col-sm-9">
+					                  <input class="wid100Inp" type="file" id="logo2" name="file" >
+					                 </div>
+					                  <div style="clear: both;"></div>
+	           </div>
+				
+				<div class="row cl">
+					<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+						<button type="submit" class="btn btn-success radius"
+							ng-click="submit()">&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+					</div>
+				</div>
+			</form>
+		</article>
+	</div>
+	<!--/请在上方写此页面业务相关的脚本-->
+</body>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript">
+	var app = angular.module('myApp', []);
+	app.controller('bidaddCtrl', function($scope, $http) {
+
+		 $scope.getQueryString= function(name) {  
+		            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");  
+		            var r = window.location.search.substr(1).match(reg);  
+		            if (r != null) return unescape(r[2]);  
+		            return null;  
+		        }  
+		 
+		$scope.getPerInfo = function(){
+			 var id=$scope.getQueryString("id");
+			 $scope.novel_id= $scope.getQueryString("novel_id");
+			if (typeof id == 'undefined' || id == null ||id == 'undefined')
+				return ;
+			var param={'id':id}
+			$http({
+				method : "POST",
+				params : param,
+				url : "/novel/get_novel_detail"
+			}).success(function(data) {
+				$scope.po=data.data;
+			});
+		};
+
+		$scope.free_status = [
+		    {site : "免费", code : "0"},
+		    {site : "收费", code : "1"}
+		];
+		$scope.getPerInfo();
+		
+		 //图片上传
+	    var xhr;
+	    //上传文件方法
+	  $scope.submit = function () {
+	        var url = "/upload/upload_file"; // 接收上传文件的后台地址
+	        var form = new FormData(document.getElementById('updateLoansuperform')); // FormData 对象
+	        if (typeof $scope.po == 'undefined'
+				|| $scope.po == null
+				|| $scope.po.chapter_name == null
+				|| $scope.po.chapter_name == '') {
+			alert('章节名称不能为空');
+		 	return;
+		     }
+	        console.log($scope.po.id);
+	       if (typeof $scope.po.free_state == 'undefined' ) {
+			alert('收费状态不能为空');
+		 	return;
+		     }
+	        var file =document.getElementById('logo2');
+	        if(file.files.length==0){
+	        	alert("上传文件不能为空");
+	        	return;
+	        }
+	        xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
+	        xhr.open("post", url, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
+// 	        xhr.onload = $scope.uploadComplete(); //请求完成
+	        xhr.upload.onloadstart = function(){//上传开始执行方法
+	            ot = new Date().getTime();   //设置上传开始时间
+	            oloaded = 0;//设置上传开始时，以上传的文件大小为0
+	        };
+	        xhr.send(form); //开始上传，发送form数据
+	        window.parent.location.reload(); //刷新父页面
+			var index = parent.layer.getFrameIndex(window.name);
+// 			parent.layer.close(index);
+	    }
+	    
+	      $scope.uploadComplete=function() {
+	    	
+	        }
+	});
+	
+	
+</script>
+</html>

@@ -1,0 +1,149 @@
+package com.novel.web.upload.entity;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "t_materialsauth")
+public class UploadFileInfoPO {
+	@Id
+	@GeneratedValue
+	private Integer id;// '编号',
+	@Column
+	private String materAuthTypeId;// '认证类别id(关联认证类别表)
+	@Column
+	private String imgPath;// '认证图片地址',
+	@Column
+	private Integer auditStatus;// 认证状态(默认NULL，表示未上传，1 默认审核中或等待审核 2 审核不通过 3
+								// 审核通过)',
+	@Column
+	private Long userId;// '用户id',
+	@Column
+	private Date authTime;// 认证通过时间',
+	@Column
+	private Date passTime;// '上传资料时间',
+	@Column
+	private String file_option;// '证件的审核观点',
+	@Column
+	private Date pastTime;// T '过期时间(当确认状态为审核失败（2）的时候这个时间有值)',
+	@Column
+	private Long materaldetalId;// '可见图片的id',
+	@Column
+	private Integer criditing;// '单个证件的信用积分 默认积分为0',
+	@Column
+	private Integer isShow;// '是否显示 1：不显示 2 显示',
+	@Column
+	private Integer type;// '图片类别 1：基础交易材料 2：保理业务材料 3：其他',
+	@Column
+	private String imgname;// '图片名称',
+	@Column
+	private Long current_id;// '标的id',
+	@Column
+	private Long project_id;// '理财id'
+	
+	
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getMaterAuthTypeId() {
+		return materAuthTypeId;
+	}
+	public void setMaterAuthTypeId(String materAuthTypeId) {
+		this.materAuthTypeId = materAuthTypeId;
+	}
+	public String getImgPath() {
+		return imgPath;
+	}
+	public void setImgPath(String imgPath) {
+		this.imgPath = imgPath;
+	}
+	public Integer getAuditStatus() {
+		return auditStatus;
+	}
+	public void setAuditStatus(Integer auditStatus) {
+		this.auditStatus = auditStatus;
+	}
+	public Long getUserId() {
+		return userId;
+	}
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+	public Date getAuthTime() {
+		return authTime;
+	}
+	public void setAuthTime(Date authTime) {
+		this.authTime = authTime;
+	}
+	public Date getPassTime() {
+		return passTime;
+	}
+	public void setPassTime(Date passTime) {
+		this.passTime = passTime;
+	}
+	
+	public String getFile_option() {
+		return file_option;
+	}
+	public void setFile_option(String file_option) {
+		this.file_option = file_option;
+	}
+	public Date getPastTime() {
+		return pastTime;
+	}
+	public void setPastTime(Date pastTime) {
+		this.pastTime = pastTime;
+	}
+	public Long getMateraldetalId() {
+		return materaldetalId;
+	}
+	public void setMateraldetalId(Long materaldetalId) {
+		this.materaldetalId = materaldetalId;
+	}
+	public Integer getCriditing() {
+		return criditing;
+	}
+	public void setCriditing(Integer criditing) {
+		this.criditing = criditing;
+	}
+	public Integer getIsShow() {
+		return isShow;
+	}
+	public void setIsShow(Integer isShow) {
+		this.isShow = isShow;
+	}
+	public Integer getType() {
+		return type;
+	}
+	public void setType(Integer type) {
+		this.type = type;
+	}
+	public String getImgname() {
+		return imgname;
+	}
+	public void setImgname(String imgname) {
+		this.imgname = imgname;
+	}
+	public Long getCurrent_id() {
+		return current_id;
+	}
+	public void setCurrent_id(Long current_id) {
+		this.current_id = current_id;
+	}
+	public Long getProject_id() {
+		return project_id;
+	}
+	public void setProject_id(Long project_id) {
+		this.project_id = project_id;
+	}
+	
+	
+}

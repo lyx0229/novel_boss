@@ -1,0 +1,14 @@
+package com.novel.web.upload.dao;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+
+import com.novel.web.upload.entity.PersonInfoPO;
+
+public interface PersonInfoDAO extends  JpaSpecificationExecutor<PersonInfoPO>,JpaRepository<PersonInfoPO, Integer>{
+
+	
+	@Query(value = "select u from PersonInfoPO u where u.bid_id=?1")
+	PersonInfoPO findPersonInfoPOByBidId(Integer project_id);
+}

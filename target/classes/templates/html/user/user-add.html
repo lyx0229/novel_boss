@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+<title>添加用户</title>
+<meta name="keywords"
+	content="H-ui.admin v3.1,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description"
+	content="H-ui.admin v3.1，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+	
+	
+	
+</head>
+<body>
+	<div ng-app="myApp" ng-controller="useraddCtrl">
+		<article class="page-container">
+			<form class="form form-horizontal" id="form-admin-add">
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>姓名：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="userPO.userName">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>初始密码：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="password" class="input-text"
+							ng-model="userPO.passWord">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>确认密码：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="password" class="input-text" ng-model="passWord1">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>手机：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="userPO.phoneNum">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>角色：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<div class="cl permission-list2">
+							<ul ng-repeat="rolePO in roleOpinionList">
+								<li class="form-label col-xs-4 col-sm-3" style="text-align: left;">
+								 <input type="checkbox" id={{rolePO.id}} name="{{rolePO.roleName}}" ng-checked="isSelected(rolePO.id)" ng-click="updateSelection($event,rolePO.id)">
+                     {{rolePO.roleName }}
+								<!-- <input name="ids"
+									type="checkbox" ng-true-value="true" ng-false-value="false"
+									ng-model="rolePO.id" />{{rolePO.roleName}}</li> -->
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3">备注：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<textarea name="" cols="" rows="" class="textarea"
+							dragonfly="true" ng-model="userPO.remark"></textarea>
+						<p class="textarea-numberbar">
+							<em class="textarea-length">0</em>/100
+						</p>
+					</div>
+				</div>
+				<div class="row cl">
+					<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+						<!-- 			<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;"> -->
+						<button type="submit" class="btn btn-success radius"
+							ng-click="submit()">&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+					</div>
+				</div>
+			</form>
+		</article>
+	</div>
+	<!--/请在上方写此页面业务相关的脚本-->
+</body>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript">
+	var app = angular.module('myApp', []);
+	app.controller('useraddCtrl', function($scope, $http) {
+
+		$scope.roleList = function() {
+			$http({
+				method : "POST",
+				params : '',
+				url : "/role/roleOpinionList"
+			}).success(function(data) {
+				$scope.roleOpinionList=data.roleOpinionList;
+			});
+		}
+		$scope.roleList();
+		
+		
+		$scope.isSelected = function() {
+			
+			
+		}
+		 $scope.selected = [];
+	     $scope.selectedTags = [];
+		
+		$scope.submit = function() {
+			
+			if(typeof $scope.selected =='undefined'|| $scope.selected==null || $scope.selected==''){
+				alert('请选择角色');
+				return ;
+			}
+			if(typeof $scope.userPO =='undefined'|| $scope.userPO==null || $scope.userPO.userName==null || $scope.userPO.userName==''){
+				alert('姓名不能为空');
+				return ;
+			}
+			if($scope.userPO.passWord==null || $scope.userPO.passWord==''){
+				alert('初始密码不能为空');
+				return ;
+			}
+			if($scope.passWord1==null || $scope.passWord1==''){
+				alert('确认密码不能为空');
+				return ;
+			}
+			if($scope.userPO.phoneNum==null || $scope.userPO.phoneNum==''){
+				alert('手机号码不能为空');
+				return ;
+			}
+			
+			var password = $scope.userPO.passWord;
+			var compare = $scope.passWord1;
+			if (compare!=password) {
+				alert("两次密码输入不一致!");
+				return;
+			}
+			var param = {
+				"userPO" : JSON.stringify($scope.userPO),
+				"ids":JSON.stringify($scope.selected)
+			}
+			$http({
+				method : "POST",
+				params : param,
+				url : "/user/userAdd"//  /role/roleOpinionList
+			}).success(function(data) {
+				alert(data.msg);
+				window.parent.location.reload(); //刷新父页面
+				var index = parent.layer.getFrameIndex(window.name);  
+				parent.layer.close(index); 
+			});
+		};
+		
+		
+	
+	     
+	     var updateSelected = function(action,id,name){
+	         if(action == 'add' && $scope.selected.indexOf(id) == -1){
+	             $scope.selected.push(id);
+	             $scope.selectedTags.push(name);
+	         }
+	         if(action == 'remove' && $scope.selected.indexOf(id)!=-1){
+	             var idx = $scope.selected.indexOf(id);
+	             $scope.selected.splice(idx,1);
+	             $scope.selectedTags.splice(idx,1);
+	         }
+	     }
+	     
+	     $scope.updateSelection = function($event, id){
+	         var checkbox = $event.target;
+	         var action = (checkbox.checked?'add':'remove');
+	         updateSelected(action,id,checkbox.name);
+	     }
+	     
+	     $scope.isSelected = function(id){
+	         return $scope.selected.indexOf(id)>=0;
+	     }
+		
+	});
+
+</script>
+</html>

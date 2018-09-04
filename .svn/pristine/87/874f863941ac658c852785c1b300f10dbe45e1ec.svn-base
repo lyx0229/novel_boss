@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<link rel="stylesheet" type="text/css" href="/htgl/css/theme.css">
+<link rel="stylesheet" type="text/css" href="/htgl/css/summernote.css">
+<link rel="stylesheet" type="text/css" href="/htgl/css/admin-forms.css">
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/magnific-popup.css">
+<link rel="stylesheet" type="text/css" href="/htgl/css/octicons.css">
+
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.js"></script>
+
+</head>
+<body>
+<div ng-app="myApp" ng-controller="bidinfoCtrl">
+	<input type="hidden" id="projectid" ng-model="projectid"/>
+	<input type="hidden" id="id" ng-model="id" />
+	<div class="tray tray-center">
+		<div class="panel"
+			style="width: 95%; margin: auto; border: none; margin-top: 10px;">
+			<div class="tab-block mb25">
+				<div class="tab-content" style="height: 600px;">
+					<div id="tab12_1" class="tab-pane active">
+						<div class="topbar-left">
+							<div class="form-group" style="height: 400px;">
+								<label class="col-lg-3 control-label" for="textArea1"
+									style="font-weight: 600; margin-bottom: 5px;">项目介绍</label>
+								<div class="col-lg-8" style="width: 100%;">
+									<div class="bs-component">
+										<div class="summernote" id="company_jcjy" style="height: 500px;">
+											</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-lg-3 control-label"
+									style="margin-top: 10px; margin-bottom: 5px; font-weight: 600;">&nbsp;</label>
+								<button type="button"
+									class="btn btn-primary btn-gradient dark btn-block"
+									ng-click="add_company()">保 存</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+</body>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/utility.js"></script>
+<script type="text/javascript" src="/htgl/js/summernote.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/htgl/js/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript" src="/htgl/js/ng-pagination.min.js"></script>
+
+
+<script>
+$(function(){
+   $('.summernote').summernote({
+      height: 300, //set editable area's height
+      focus: false, //set focus editable area after Initialize summernote
+      oninit: function() {},
+      onChange: function(contents, $editable) {},
+    });
+})
+</script>
+
+<script type="text/javascript">
+
+var app = angular.module('myApp', [ 'ng-pagination' ]);
+app.controller('bidinfoCtrl', function($scope, $http) {
+	$scope.GetUrlPara=function ()
+	{
+		　　var url = document.location.toString();
+		　　var arrUrl = url.split("?");
+		　　var para = arrUrl[1];
+		　　return para;
+		} 
+		
+		$scope.init=function()
+	   {
+		var id=$scope.GetUrlPara().split("=")[1];
+		$("#projectid").val(id);
+		  var param = {
+					'projectid' : id
+				}
+		  $http({
+				method : "POST",
+				params : param,
+				url : "/upload/company_info"
+			}).success(function(data) {
+				if(data.personInfo!=null && data.personInfo!=""){
+					$scope.id=data.personInfo.id;
+					$(".note-editable").html(data.personInfo.company_info);
+				}
+				
+			});
+		
+	}
+		$scope.init();
+	
+	 $scope.add_company=function()
+	{
+		  var param = {
+					'company_jcjy' : $('#company_jcjy').code(),
+					'id':$scope.id,
+					'projectid': $("#projectid").val()
+				}
+		  $http({
+				method : "POST",
+				params : param,
+				url : "/upload/add_company"
+			}).success(function(data) {
+				alert(data.msg);
+				var index = parent.layer.getFrameIndex(window.name);  
+				parent.layer.close(index); 
+			});
+		
+	}
+});
+	
+</script>
+
+
+</html>

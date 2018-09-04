@@ -1,0 +1,158 @@
+package com.novel.web.admin.controller;
+
+import java.text.DecimalFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.alibaba.fastjson.JSONObject;
+import com.novel.web.admin.entity.JSONResponse;
+import com.novel.web.admin.entity.Novel;
+import com.novel.web.admin.entity.NovelDetail;
+import com.novel.web.admin.entity.NovelScheme;
+import com.novel.web.admin.pojo.SchemeView;
+import com.novel.web.admin.service.NovelCmsService;
+import com.novel.web.boss.common.tools.PageableTools;
+import com.novel.web.boss.common.tools.SortDto;
+import com.novel.web.common.utils.BusinessConfig;
+import com.novel.web.common.utils.Util;
+
+@RestController
+@RequestMapping("scheme")
+public class SchemeController {
+	Logger logger = LoggerFactory.getLogger(SchemeController.class);
+	@Autowired
+	NovelCmsService novelCmsService;
+	@Autowired
+	BusinessConfig config;
+	
+	/**
+	 * 进入页面
+	 * 
+	 * @return
+	 */
+	@RequestMapping("/scheme_main")
+	public ModelAndView scheme_main() {
+		ModelAndView model = new ModelAndView("html/scheme/scheme_novel_list");
+		return model;
+	}
+	
+	/**
+	 * 进入页面
+	 * 
+	 * @return
+	 */
+	@RequestMapping("/scheme_list_main")
+	public ModelAndView scheme_list_main() {
+		ModelAndView model = new ModelAndView("html/scheme/scheme_list");
+		return model;
+	}
+	
+
+	/**
+	 * 推广链接
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/scheme_list", method = RequestMethod.POST)
+	public JSONResponse scheme_list(HttpServletRequest request) {
+		JSONObject json = new JSONObject();
+		String param1 = request.getParameter("pageSize");
+		String param2 = request.getParameter("currentPage");
+		int pageSize = Integer.valueOf(param1);
+		int currentPage = Integer.valueOf(param2);
+		List<SchemeView> schemelist=novelCmsService.findBySchemeViewByUserid(currentPage*pageSize, pageSize);
+		int count=novelCmsService.findNovelSchemeList().size();
+		DecimalFormat df = new DecimalFormat("######0"); //四色五入转换成整数
+		String pageCount=df.format(Math.ceil((double)count/pageSize));
+		json.put("schemelist", schemelist);//
+		json.put("currentPage", currentPage);//
+		json.put("count", count);//
+		json.put("pageCount", pageCount);//
+		return JSONResponse.success(json);
+	}
+
+	/**
+	 * 小说列表查询
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/novellist", method = RequestMethod.POST)
+	public JSONResponse queryFinancialInfo(HttpServletRequest request) {
+		JSONObject json = new JSONObject();
+		String param1 = request.getParameter("pageSize");
+		String param2 = request.getParameter("currentPage");
+		String novel_name = request.getParameter("searchName");
+		int sex_status = Util.toInt(request.getParameter("searchSexStatus"));
+		int type_status = Util.toInt(request.getParameter("searchTypeStatus"));
+		int novel_state = Util.toInt(request.getParameter("searchNovelStatus"));
+		int hot_status = Util.toInt(request.getParameter("searchHotStatus"));
+		int pageSize = Integer.valueOf(param1);
+		int currentPage = Integer.valueOf(param2);
+		Novel po = new Novel();
+		po.setNovel_name(novel_name);
+		po.setSex_status(sex_status);
+		po.setNovel_state(novel_state);
+		po.setType_status(type_status);
+		po.setHot_status(hot_status);
+		Page<Novel> datas = novelCmsService.findNovelByCondition(po,
+				PageableTools.basicPage(currentPage, pageSize, new SortDto("id")));
+		json.put("novellist", datas);//
+		return JSONResponse.success(json);
+	}
+	/**
+	 * 小说章节列表查询
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/novel_detail_list", method = RequestMethod.POST)
+	public JSONResponse novel_detail_list(HttpServletRequest request) {
+		JSONObject json = new JSONObject();
+		String param1 = request.getParameter("pageSize");
+		String param2 = request.getParameter("currentPage");
+		int novel_id = Util.toInt(request.getParameter("novel_id"));
+		int pageSize = Integer.valueOf(param1);
+		int currentPage = Integer.valueOf(param2);
+		NovelDetail po = new NovelDetail();
+		po.setNovel_id(novel_id);
+		Page<NovelDetail> datas = novelCmsService.findNovelDetailByCondition(po,
+				PageableTools.basicPage(currentPage, pageSize, new SortDto("id")));
+		json.put("detaillist", datas);//
+		return JSONResponse.success(json);
+	}
+	/**
+	 * 生成推广连接
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/update_scheme", method = { RequestMethod.POST })
+	public JSONResponse update_scheme(HttpServletRequest request) {
+		String channel = request.getParameter("scheme_name");
+		int novel_id = Util.toInt(request.getParameter("novel_id"));
+		int id = Util.toInt(request.getParameter("id"));
+		NovelScheme scheme=new NovelScheme();
+		scheme.setChannel(channel);
+		scheme.setNovel_detail_id(id);
+		scheme.setNovel_id(novel_id);
+		scheme.setCreate_time(new Date());
+		scheme.setUpdate_time(new Date());
+		scheme=novelCmsService.saveAndUpdate(scheme);
+		if(scheme.getId()==0){
+		return JSONResponse.error("生成连接失败");
+		}
+		String scheme_url=config.DOMAIN+"scheme/"+String.valueOf(scheme.getId());
+		scheme.setScheme_url(scheme_url);
+		scheme=novelCmsService.saveAndUpdate(scheme);
+		return JSONResponse.success(scheme);
+	}
+}

@@ -1,0 +1,62 @@
+package com.novel.web.admin.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+
+import com.novel.web.admin.entity.Novel;
+import com.novel.web.admin.entity.WeixinUserInfo;
+import com.novel.web.admin.repository.UserRepository;
+
+@Service
+public class WxUserService {
+	Logger logger = LoggerFactory.getLogger(WxUserService.class);
+	@Autowired
+	private UserRepository repository;
+	public WeixinUserInfo findUserById(Integer id) {
+		return repository.findOne(id);
+	}
+	
+	public WeixinUserInfo saveAndUpdate(WeixinUserInfo user){
+		return repository.saveAndFlush(user);
+	}
+	
+	public Page<WeixinUserInfo> findUserByCondition(WeixinUserInfo po, Pageable basicPage) {
+		Specification<WeixinUserInfo> specification = new Specification<WeixinUserInfo>() {
+			@Override
+			public Predicate toPredicate(Root<WeixinUserInfo> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+
+				List<Predicate> predicates = new ArrayList<>();
+				if (po.getVip_status() != -1) {
+					predicates.add(cb.equal(root.get("vip_status").as(Integer.class), po.getVip_status()));
+				}
+				if (po.getSex() !=0) {
+					predicates.add(cb.equal(root.get("sex").as(Integer.class), po.getSex()));
+				}
+				if (po.getScheme_id() !=0) {
+					predicates.add(cb.equal(root.get("scheme_id").as(Integer.class), po.getScheme_id()));
+				}
+				if (po.getOpen_id() !=null) {
+					predicates.add(cb.equal(root.get("open_id").as(String.class), po.getOpen_id()));
+				}
+				if (po.getChannel() !=null) {
+					predicates.add(cb.equal(root.get("channel").as(String.class), po.getChannel()));
+				}
+				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+			}
+		};
+		return repository.findAll(specification, basicPage);
+	}
+}

@@ -1,0 +1,180 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="js/html5shiv.js"></script>
+<script type="text/javascript" src="js/respond.min.js"></script>
+<![endif]-->
+	<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+		<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+		<link rel="stylesheet" type="text/css" href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="/htgl/css/skin/default/skin.css" id="skin" />
+		<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+        <link rel="stylesheet" type="text/css" href="/htgl/css/ng-pagination.min.css"  />
+<title>角色管理</title>
+  <style type="text/css">
+    body {
+      padding: 20px 0 0 20px;
+    }
+
+    .pager {
+      margin: 20px;
+      text-align: right;
+    }
+  </style>
+</head>
+
+<body>
+	<div ng-app="myApp" ng-controller="userinfoCtrl">
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 系统管理<span class="c-gray en">&gt;</span> 角色管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="text-c"> 角色名称
+		 <input  type="text" class="input-text" style="width:250px" ng-model="searchRoleName">
+		 角色编码
+		<input  type="text" class="input-text" style="width:250px" ng-model="searchRoleCode">
+		<button type="submit" class="btn btn-success radius" ng-click="onPageChange()"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+		<button type="submit" class="btn btn-success radius" ng-click="reset()">重置</button>
+	</div>
+	<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" ng-click="member_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加角色</a></span> 
+	</div>
+	<div class="mt-20">
+	<table class="table table-border table-bordered table-hover table-bg table-sort">
+		<thead>
+			<tr class="text-c">
+			    <th width="80">序号</th>
+				<th width="80">ID</th>
+				<th width="100">角色名称</th>
+				<th width="90">角色编码</th>
+				<th width="130">更新时间</th>
+				<th width="100">操作</th>
+			</tr>
+		</thead>
+		<tbody ng-repeat="rolePO in rolelist" >
+			<tr class="text-c" >
+		    	<td>{{$index+1}}</td>
+				<td>{{rolePO.id}}</td>
+				<td>{{rolePO.roleName}}</td>
+				<td>{{rolePO.roleCode}}</td>
+				<td>{{rolePO.createTime  | date:'yyyy-MM-dd hh:mm:ss'}}</td>
+				<td class="td-manage">
+				 <a style="text-decoration:none" ng-click="member_view($index)" href="javascript:;" title="查看"><i class="Hui-iconfont">&#xe631;</i></a>
+				 <a title="编辑" href="javascript:;" ng-click="member_edit($index)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> 
+				 <a title="删除" href="javascript:;" ng-click="member_del($index)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+			</tr>
+			
+		</tbody>
+		
+	</table>
+	
+	</div>
+</div>
+<div class="div" type="text-align:right;"><div class="col-md-12"><div class="dataTables_info">共 {{count}}条记录，每页  {{pageSize}} 条，当前第 {{currentPage}} / {{pageCount}}</font> 页</div></div></div>
+     <div class="pager">
+      <pager page-count="pageCount" current-page="currentPage" on-page-change="onPageChange()" first-text="首页" next-text="下一页"
+        prev-text="上一页" last-text="尾页"></pager>
+    </div>
+     </div>
+</body>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/htgl/js/My97DatePicker/4.8/WdatePicker.js"></script> 
+<script type="text/javascript" src="/htgl/js/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript" src="/htgl/js/ng-pagination.min.js"></script>
+<script type="text/javascript">
+
+	var app = angular.module('myApp', ['ng-pagination']);
+	app.controller('userinfoCtrl', function($scope, $http) {
+		$scope.currentPage=1;
+		$scope.pageSize=15;
+	$scope.onPageChange = function() {
+			var param = {
+				'pageSize' : $scope.pageSize,
+				'currentPage' : $scope.currentPage-1,
+				'searchRoleName': $scope.searchRoleName,
+				'searchRoleCode': $scope.searchRoleCode
+			}
+			$http({
+				method : "POST",
+				params : param,
+				url : "rolelist"
+			}).success(function(data) {
+				$scope.rolelist = data.rolelist.content;
+				$scope.pageCount = data.rolelist.totalPages;
+				$scope.currentPage = data.rolelist.number+1;
+				$scope.count = data.rolelist.totalElements;
+			});
+		};
+
+		$scope.onPageChange();
+		
+		/*重置*/
+		
+		$scope.reset=function() {
+			$scope.searchRoleName=null;
+			$scope.searchRoleCode=null;
+		}
+		
+		/*角色-删除*/
+	 
+	$scope.member_del = function(index) {
+			if (confirm("确认要删除吗？")) {
+				var roleid = {
+					'roleid' : $scope.rolelist[index].id
+				}
+				$http({
+					method : "POST",
+					params : roleid,
+					url : "roleDel"
+				}).success(function(data) {
+					$scope.rolelist.splice(index, 1);
+					alert(data.msg);
+				});
+			} else {
+				return;
+			}
+
+		};
+		/*角色-添加*/
+		$scope.member_add = function() {
+			var title = '添加角色';
+			var url = '/html/user/role-add.html';
+			var w = '';
+			var h = '810';
+			layer_show(title, url, w, h);
+		}
+
+		/*角色-编辑*/
+		$scope.member_edit = function(index) {
+			var title = '编辑';
+			var id = $scope.rolelist[index].id;
+			var url = '/html/user/role-edit.html?userid=' + id;
+			var w = '';
+			var h = '810';
+			layer_show(title, url, w, h);
+		}
+
+		/*用户-查看*/
+		$scope.member_view = function(index) {
+			var title = '查看';
+			var id = $scope.rolelist[index].id;
+			var url = '/html/user/role-view.html?roleid=' + id;
+			var w = '';
+			var h = '810';
+			layer_show(title, url, w, h);
+		}
+
+	});
+
+	
+</script> 
+</html>

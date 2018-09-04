@@ -1,0 +1,9 @@
+#礼物图片路径
+GOODS_IMG=E:\\wx_novel\\books\\goods\\
+#充值模板图片路径
+RECHARGE_IMG=E:\\wx_novel\\books\\recharge\\
+#小说储存路径
+BOOKS_URL=E:\\wx_novel\\books\\
+#小说域名
+DOMAIN=http://xs.ylnnt.com/
+

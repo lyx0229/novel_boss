@@ -1,0 +1,16 @@
+package com.novel.web.upload.dao;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+
+import com.novel.web.upload.entity.UploadFileInfoPO;
+
+public interface UploadFileInfoDAO extends  JpaSpecificationExecutor<UploadFileInfoPO>,JpaRepository<UploadFileInfoPO, Integer>{
+
+	
+	@Query(value = "select u from UploadFileInfoPO u where u.project_id=?1")
+	 List<UploadFileInfoPO> findUploadFileInfoPOByProjectId(Long project_id);
+}

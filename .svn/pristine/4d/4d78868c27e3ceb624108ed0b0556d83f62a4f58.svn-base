@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+<title>查看资源</title>
+<meta name="keywords"
+	content="H-ui.admin v3.1,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description"
+	content="H-ui.admin v3.1，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+	<div ng-app="myApp" ng-controller="perAddCtrl">
+		<article class="page-container">
+			<form class="form form-horizontal" id="form-admin-add">
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>资源名称：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						{{perPO.perName}}
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>资源编码：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						{{perPO.perCode}}
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3">资源路径：</label>
+					{{perPO.perUrl}}
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3">上级资源：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<span class="select-box" style="width: 150px;"> <select
+							class="select" ng-model="perPO.perUpperId"  ng-options="item.id as item.perName for item in perOpinionList" disabled="disabled">
+						<option value="">--请选择--</option>
+						</select>
+						</span>
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3">资源等级：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<span class="select-box" style="width: 150px;"> <select
+							class="select" ng-model="perPO.perLevel"  disabled="disabled">
+							<option ng-repeat="x in levels" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3">备注：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						{{perPO.remark}}
+						<p class="textarea-numberbar">
+							<em class="textarea-length">0</em>/100
+						</p>
+					</div>
+				</div>
+			</form>
+		</article>
+	</div>
+	<!--/请在上方写此页面业务相关的脚本-->
+</body>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript">
+	var app = angular.module('myApp', []);
+	app.controller('perAddCtrl', function($scope, $http) {
+
+		
+		$scope.GetUrlPara=function ()
+		{
+			　　var url = document.location.toString();
+			　　var arrUrl = url.split("?");
+			　　var para = arrUrl[1];
+			　　return para;
+			} 
+		
+		$scope.getPerInfo = function(){
+			Request = $scope.GetUrlPara();  
+			var perid=$scope.GetUrlPara().split("=")[1];
+			var param={'perid':perid}
+			$http({
+				method : "POST",
+				params : param,
+				url : "/permission/editPer"
+			}).success(function(data) {
+				$scope.perPO=data.PermissionPO;
+			});
+		};
+		
+		$scope.getPerInfo();
+		
+		$scope.perList = function() {
+			$http({
+				method : "POST",
+				params : '',
+				url : "/permission/perOpinionList"
+			}).success(function(data) {
+				$scope.perOpinionList=data.perOpinionList;
+				debugger;
+			});
+		}
+		$scope.perList();
+		
+		
+		$scope.levels = [
+		    {site : "一级", code : "1"},
+		    {site : "二级", code : "2"},
+		    {site : "三级", code : "3"}
+		];
+		
+	});
+
+</script>
+</html>

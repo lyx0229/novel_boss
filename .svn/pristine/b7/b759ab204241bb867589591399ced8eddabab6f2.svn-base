@@ -1,0 +1,7 @@
+package com.novel.web.upload.constants;
+
+public class Constant {
+
+	public static String FILE_URL="D:/upload/";//文件存放路径
+	
+}

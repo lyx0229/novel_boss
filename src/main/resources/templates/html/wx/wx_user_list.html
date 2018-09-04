@@ -1,0 +1,225 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="js/html5shiv.js"></script>
+<script type="text/javascript" src="js/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/ng-pagination.min.css" />
+<title>会员信息</title>
+<style type="text/css">
+body {
+	padding: 20px 0 0 20px;
+}
+.wrap{
+    width: 150px; /* //设置需要固定的宽度 */
+    white-space: nowrap; /* //不换行 */
+    text-overflow: ellipsis; /* //超出部分用....代替 */
+   overflow: hidden;/*   //超出隐藏 */
+    }
+.pager {
+	margin: 20px;
+	text-align: right;
+}
+.image {
+	hight: 40%;
+	width: 40%;
+}
+</style>
+</head>
+
+<body>
+	<div ng-app="myApp" ng-controller="bidinfoCtrl">
+		<nav class="breadcrumb">
+			<i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>
+			会员管理<span class="c-gray en">&gt;</span> 会员信息 <a
+				class="btn btn-success radius r"
+				style="line-height: 1.6em; margin-top: 3px"
+				href="javascript:location.replace(location.href);" title="刷新"><i
+				class="Hui-iconfont">&#xe68f;</i></a>
+		</nav>
+		<div class="page-container">
+			<div class="text-c">
+			          用户标识 <input type="text" class="input-text" style="width: 150px"
+					ng-model="searchName">
+			        推广ID <input type="text" class="input-text" style="width: 150px"
+					ng-model="searchScheme">	
+			         渠道来源 <input type="text" class="input-text" style="width: 150px"
+					ng-model="searchChannel">	
+				        性别
+	            <span class="select-box" style="width: 150px;"> <select
+							class="select" ng-model="searchSex" >
+							<option value="2">--请选择--</option>
+							<option ng-repeat="x in sex_status" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>	
+				        分类
+	            <span class="select-box" style="width: 150px;"> <select
+							class="select" ng-model="searchVipStatus" >
+							<option value="0">--请选择--</option>
+							<option ng-repeat="x in vip_status" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>	
+				<button type="submit" class="btn btn-success radius"
+					ng-click="onPageChange()">
+					<i class="Hui-iconfont">&#xe665;</i> 查询
+				</button>
+				<button type="submit" class="btn btn-success radius"
+					ng-click="reset()">重置</button>
+			</div>
+			<div class="mt-20">
+				<table
+					class="table table-border table-bordered table-hover table-bg table-sort">
+					<thead>
+						<tr class="text-c">
+							<th width="50">序号</th>
+							<th width="50">ID</th>
+							<th class="wrap">用户标识</th>
+							<th width="100">性别</th>
+							<th width="80">国家</th>
+							<th width="80">省份</th>
+							<th width="50">城市</th>
+							<th width="80">VIP状态</th>
+							<th width="100">VIP创建时间</th>
+							<th width="100">VIP到期时间</th>
+							<th width="50">书豆</th>
+							<th width="50">阅读积分</th>
+							<th class="wrap" >公众号</th>
+							<th class="100" >推广ID</th>
+							<th class="100" >渠道来源</th>
+							<th width="100">创建时间</th>
+						</tr>
+					</thead>
+					<tbody ng-repeat="po in wx_user_list">
+						<tr class="text-c">
+							<td>{{$index+1}}</td>
+							<td>{{po.id}}</td>
+							<td class="wrap"  title="{{po.open_id}}">{{po.open_id}}</td>
+<!-- 							<td>{{po.nick_name}}</td> -->
+<!-- 							<td><img class="image" src="{{po.head_imgurl}}"></td> -->
+							<td>
+							<div ng-if="po.sex=='1'">男性</div>
+							<div ng-if="po.sex=='2'">女性</div>
+							</td>
+							<td>{{po.country}}</td>
+							<td>{{po.province}}</td>
+							<td>{{po.city}}</td>
+							<td>
+							<div ng-if="po.vip_status=='0'">非vip</div>
+							<div ng-if="po.vip_status=='1'">vip</div>
+							<div ng-if="po.vip_status=='2'">vip过期</div>
+							</td>
+							<td>{{po.vip_time | date:'yyyy-MM-dd'}}</td>
+							<td>{{po.vip_end_time | date:'yyyy-MM-dd'}}</td>
+							<td>{{po.book_peas}}</td>
+							<td>{{po.read_points}}</td>
+							<td class="wrap" title="{{po.app_id}}">{{po.app_id}}</td>
+							<td>{{po.scheme_id}}</td>
+							<td>{{po.channel}}</td>
+							<td>{{po.create_time | date:'yyyy-MM-dd'}}</td>
+						</tr>
+
+					</tbody>
+
+				</table>
+
+			</div>
+		</div>
+		<div class="div" type="text-align:right;">
+			<div class="col-md-12">
+				<div class="dataTables_info">
+					共 {{count}}条记录，每页 {{pageSize}} 条，当前第 {{currentPage}} /
+					{{pageCount}}</font> 页
+				</div>
+			</div>
+		</div>
+		<div class="pager">
+			<pager page-count="pageCount" current-page="currentPage"
+				on-page-change="onPageChange()" first-text="首页" next-text="下一页"
+				prev-text="上一页" last-text="尾页"></pager>
+		</div>
+	</div>
+</body>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/htgl/js/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript" src="/htgl/js/ng-pagination.min.js"></script>
+<script type="text/javascript">
+	var app = angular.module('myApp', [ 'ng-pagination' ]);
+	app.controller('bidinfoCtrl', function($scope, $http) {
+		$scope.currentPage = 1;
+		$scope.pageSize = 15;
+		$scope.onPageChange = function() {
+			if($scope.searchVipStatus==null || $scope.searchVipStatus==""){
+				$scope.searchVipStatus=-1;
+			}
+			
+			var param = {
+				'pageSize' : $scope.pageSize,
+				'currentPage' : $scope.currentPage - 1,
+				'searchName' : $scope.searchName,
+				'searchScheme' : $scope.searchScheme,
+				'searchChannel' : $scope.searchChannel,
+				'searchSex' : $scope.searchSex,
+				'searchVipStatus' : $scope.searchVipStatus
+			}
+			$http({
+				method : "POST",
+				params : param,
+				url : "/wx_user/wx_user_list"
+			}).success(function(data) {
+				console.log(data.wx_user_list.content);
+				$scope.wx_user_list = data.wx_user_list.content;
+				$scope.pageCount = data.wx_user_list.totalPages;
+				$scope.currentPage = data.wx_user_list.number + 1;
+				$scope.count = data.wx_user_list.totalElements;
+			});
+		};
+		$scope.onPageChange();
+
+		/*重置*/
+
+		$scope.reset = function() {
+			$scope.searchName = null;
+			$scope.searchScheme = null;
+			$scope.searchChannel = null;
+			 $scope.searchSex= 0;
+			 $scope.searchVipStatus= -1;
+			
+		}
+
+		$scope.sex_status = [
+		    {site : "女", code : "2"},
+		    {site : "男", code : "1"}
+		];
+		$scope.vip_status = [
+		    {site : "非vip", code : "0"},
+		    {site : "vip", code : "1"},
+		    {site : "vip过期", code : "2"}
+		];
+		
+	});
+	
+</script>
+</html>

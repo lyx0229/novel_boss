@@ -1,0 +1,12 @@
+package com.novel.web.common.utils;
+
+public class Util {
+
+	public static int toInt(String strNum) {
+		if (strNum == null || "".equals(strNum)) {
+			return 0;
+		}
+		Integer integer = new Integer(strNum);
+		return integer.parseInt(strNum);
+	}
+}

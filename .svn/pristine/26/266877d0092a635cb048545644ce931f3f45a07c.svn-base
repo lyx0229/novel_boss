@@ -1,0 +1,280 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="js/html5shiv.js"></script>
+<script type="text/javascript" src="js/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/ng-pagination.min.css" />
+<title>小说信息</title>
+<style type="text/css">
+body {
+	padding: 20px 0 0 20px;
+}
+.wrap{
+    width: 150px; /* //设置需要固定的宽度 */
+    white-space: nowrap; /* //不换行 */
+    text-overflow: ellipsis; /* //超出部分用....代替 */
+   overflow: hidden;/*   //超出隐藏 */
+    }
+.pager {
+	margin: 20px;
+	text-align: right;
+}
+</style>
+</head>
+
+<body>
+	<div ng-app="myApp" ng-controller="bidinfoCtrl">
+		<nav class="breadcrumb">
+			<i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>
+			小说管理<span class="c-gray en">&gt;</span> 小说信息 <a
+				class="btn btn-success radius r"
+				style="line-height: 1.6em; margin-top: 3px"
+				href="javascript:location.replace(location.href);" title="刷新"><i
+				class="Hui-iconfont">&#xe68f;</i></a>
+		</nav>
+		<div class="page-container">
+			<div class="text-c">
+				小说名称 <input type="text" class="input-text" style="width: 150px"
+					ng-model="searchName">
+				        性别
+	            <span class="select-box" style="width: 150px;"> <select
+							class="select" ng-model="searchSexStatus" >
+							<option value="2">--请选择--</option>
+							<option ng-repeat="x in sex_status" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>	
+				        分类
+	            <span class="select-box" style="width: 150px;"> <select
+							class="select" ng-model="searchTypeStatus" >
+							<option value="0">--请选择--</option>
+							<option ng-repeat="x in type_status" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>	
+				        连载状态
+	            <span class="select-box" style="width: 150px;"> <select
+							class="select" ng-model="searchNovelStatus" >
+							<option value="0">--请选择--</option>
+							<option ng-repeat="x in novel_state" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>	
+				        榜单类型
+	            <span class="select-box" style="width: 150px;"> <select
+							class="select" ng-model="searchHotStatus" >
+							<option value="0">--请选择--</option>
+							<option ng-repeat="x in hot_status" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>	
+					
+				<button type="submit" class="btn btn-success radius"
+					ng-click="onPageChange()">
+					<i class="Hui-iconfont">&#xe665;</i> 查询
+				</button>
+				<button type="submit" class="btn btn-success radius"
+					ng-click="reset()">重置</button>
+			</div>
+			<div class="cl pd-5 bg-1 bk-gray mt-20">
+				<span class="l"><a href="javascript:;"
+					ng-click="member_add()" class="btn btn-primary radius"><i
+						class="Hui-iconfont">&#xe600;</i> 添加小说</a></span>
+			</div>
+			<div class="mt-20">
+				<table
+					class="table table-border table-bordered table-hover table-bg table-sort">
+					<thead>
+						<tr class="text-c">
+							<th width="50">序号</th>
+							<th width="50">ID</th>
+							<th width="100">小说名称</th>
+							<th class="wrap">图片地址</th>
+							<th class="wrap" >简介</th>
+							<th width="130">作者</th>
+							<th width="100">性别分类</th>
+							<th width="100">分类</th>
+							<th width="100">连载状态</th>
+							<th  class="wrap">最新章节</th>
+							<th width="130">更新时间</th>
+							<th width="50">票数</th>
+							<th width="130">章节URL</th>
+							<th width="100">所属榜单</th>
+							<th width="100">操作</th>
+						</tr>
+					</thead>
+					<tbody ng-repeat="po in novellist">
+						<tr class="text-c">
+							<td>{{$index+1}}</td>
+							<td>{{po.id}}</td>
+							<td>{{po.novel_name}}</td>
+							<td><div class="wrap" title="{{po.novel_imgurl}}">{{po.novel_imgurl}}</div></td>
+							<td ><div class="wrap" title="{{po.novel_brief}}">{{po.novel_brief}}</div></td>
+							<td>{{po.novel_author}}</td>
+							<td>{{po.sex_str}}</td>
+							<td>{{po.type_str}}</td>
+							<td>{{po.novel_str}}</td>
+							<td>{{po.novel_new_chapter}}</td>
+							<td>{{po.novel_update_time | date:'yyyy-MM-dd'}}</td>
+							<td>{{po.novel_number_votes}}</td>
+							<td><div class="wrap" title="{{po.novel_page_url}}">{{po.novel_page_url}}</div></td>
+							<td>{{po.hot_str}}</td>
+							<td class="td-manage">
+								<button type="submit" class="loan_button btn btn-success radius" ng-click="member_add(po.id)">修改</button>
+								<a title="删除"  href="javascript:;" ng-click="member_del($index)"
+								class="ml-5" style="text-decoration: none"><i
+									class="Hui-iconfont">&#xe6e2;</i></a>
+							</td>
+						</tr>
+
+					</tbody>
+
+				</table>
+
+			</div>
+		</div>
+		<div class="div" type="text-align:right;">
+			<div class="col-md-12">
+				<div class="dataTables_info">
+					共 {{count}}条记录，每页 {{pageSize}} 条，当前第 {{currentPage}} /
+					{{pageCount}}</font> 页
+				</div>
+			</div>
+		</div>
+		<div class="pager">
+			<pager page-count="pageCount" current-page="currentPage"
+				on-page-change="onPageChange()" first-text="首页" next-text="下一页"
+				prev-text="上一页" last-text="尾页"></pager>
+		</div>
+	</div>
+</body>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/htgl/js/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript" src="/htgl/js/ng-pagination.min.js"></script>
+<script type="text/javascript">
+	var app = angular.module('myApp', [ 'ng-pagination' ]);
+	app.controller('bidinfoCtrl', function($scope, $http) {
+		$scope.currentPage = 1;
+		$scope.pageSize = 15;
+		$scope.onPageChange = function() {
+			if($scope.searchSexStatus==null || $scope.searchSexStatus==""){
+				$scope.searchSexStatus=2;
+			}
+			
+			var param = {
+				'pageSize' : $scope.pageSize,
+				'currentPage' : $scope.currentPage - 1,
+				'searchName' : $scope.searchName,
+				'searchSexStatus' : $scope.searchSexStatus,
+				'searchTypeStatus' : $scope.searchTypeStatus,
+				'searchNovelStatus' : $scope.searchNovelStatus,
+				'searchHotStatus' : $scope.searchHotStatus,
+			}
+			$http({
+				method : "POST",
+				params : param,
+				url : "novellist"
+			}).success(function(data) {
+				$scope.novellist = data.data.novellist.content;
+				$scope.pageCount = data.data.novellist.totalPages;
+				$scope.currentPage = data.data.novellist.number + 1;
+				$scope.count = data.data.novellist.totalElements;
+			});
+		};
+		$scope.onPageChange();
+
+		/*重置*/
+
+		$scope.reset = function() {
+			$scope.searchName = null;
+			 $scope.searchSexStatus= 2;
+			 $scope.searchTypeStatus= 0;
+			 $scope.searchNovelStatus= 0;
+			$scope.searchHotStatus= 0;
+		}
+
+		$scope.sex_status = [
+		    {site : "女频", code : "1"},
+		    {site : "男频", code : "0"}
+		];
+		$scope.novel_state = [
+		    {site : "连载中", code : "1"},
+		    {site : "已完成", code : "2"}
+		];
+		$scope.hot_status = [
+		    {site : "滚动列表", code : "1"},
+		    {site : "本周主打", code : "2"},
+		    {site : "新书试读", code : "3"},
+		    {site : "连载更新", code : "4"},
+		    {site : "人气推荐", code : "5"}
+		];
+		$scope.type_status = [
+		    {site : "奇幻玄幻", code : "1"},
+		    {site : "武侠仙侠", code : "2"},
+		    {site : "都市言情", code : "3"},
+		    {site : "历史穿越", code : "4"},
+		    {site : "官场军事", code : "5"},
+		    {site : "都市异能", code : "6"},
+		    {site : "惊悚恐怖", code : "7"},
+		    {site : "豪门总裁", code : "8"},
+		    {site : "古代言情", code : "9"},
+		    {site : "现代言情", code : "10"},
+		    {site : "穿越重生", code : "11"},
+		    {site : "耿美百合", code : "12"},
+		    {site : "惊悚恐怖", code : "13"}
+		];
+		
+		
+		/*小说-删除*/
+
+		$scope.member_del = function(index) {
+			if (confirm("确认要删除吗？")) {
+				var id = {
+					'id' : $scope.novellist[index].id
+				}
+				$http({
+					method : "POST",
+					params : id,
+					url : "del_novel"
+				}).success(function(data) {
+					$scope.novellist.splice(index, 1);
+					alert(data.desc);
+				});
+			} else {
+				return;
+			}
+		};
+		/*添加小说*/
+		$scope.member_add = function(id) {
+			var title = '添加小说';
+			var url = '/html/novel/novel_add.html?id='+id;
+			var w = '';
+			var h = '700';
+			layer_show(title, url, w, h);
+		}
+		
+	});
+	
+	
+</script>
+</html>

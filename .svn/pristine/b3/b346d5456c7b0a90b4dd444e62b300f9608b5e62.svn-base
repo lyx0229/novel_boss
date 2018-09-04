@@ -1,0 +1,164 @@
+package com.novel.web.admin.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.Transient;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+
+import com.novel.web.admin.entity.Novel;
+import com.novel.web.admin.entity.NovelDetail;
+import com.novel.web.admin.entity.NovelScheme;
+import com.novel.web.admin.pojo.SchemeView;
+import com.novel.web.admin.repository.NovelDetailRepository;
+import com.novel.web.admin.repository.NovelRepository;
+import com.novel.web.admin.repository.NovelSchemeRepository;
+
+@Service
+public class NovelCmsService {
+	@Autowired
+	NovelRepository novelRep;
+	@Autowired
+	NovelDetailRepository novelDetailRep;
+	@Autowired
+	private NovelSchemeRepository novelSchemeRep;
+	@Autowired
+	private EntityManager entityManager;
+	public Novel saveAndUpdate(Novel po) {
+		return novelRep.saveAndFlush(po);
+	}
+	public Novel findNovelById(int id) {
+		return novelRep.findOne(id);
+	}
+
+	public void deleteById(int id) {
+		 novelRep.delete(id);
+	}
+	
+	public void deleteDetailById(int id) {
+		novelDetailRep.delete(id);
+	}
+	public NovelDetail saveAndUpdate(NovelDetail po) {
+		return novelDetailRep.saveAndFlush(po);
+	}
+	public NovelDetail findNovelDetailById(int id) {
+		return novelDetailRep.findOne(id);
+	}
+	public NovelScheme saveAndUpdate(NovelScheme po) {
+		return novelSchemeRep.saveAndFlush(po);
+	}
+
+	public NovelScheme findNovelSchemeByID(int id) {
+		return novelSchemeRep.findOne(id);
+	}
+	public void deleteSchemeById(int id) {
+		novelSchemeRep.delete(id);
+	}
+	public Page<Novel> findNovelByCondition(Novel po, Pageable basicPage) {
+
+		Specification<Novel> specification = new Specification<Novel>() {
+			@Override
+			public Predicate toPredicate(Root<Novel> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+
+				List<Predicate> predicates = new ArrayList<>();
+				if (po.getSex_status() != 2) {
+					predicates.add(cb.equal(root.get("sex_status").as(Integer.class), po.getSex_status()));
+				}
+				if (po.getType_status() != 0) {
+					predicates.add(cb.equal(root.get("type_status").as(Integer.class), po.getType_status()));
+				}
+				if (po.getNovel_state() != 0) {
+					predicates.add(cb.equal(root.get("novel_state").as(Integer.class), po.getNovel_state()));
+				}
+				if (po.getHot_status() != 0) {
+					predicates.add(cb.equal(root.get("hot_status").as(Integer.class), po.getHot_status()));
+				}
+				if (po.getNovel_name() != null && !"".equals(po.getNovel_name())) {
+					predicates.add(cb.like(root.get("novel_name").as(String.class), "%" + po.getNovel_name() + "%"));
+				}
+				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+			}
+		};
+		return novelRep.findAll(specification, basicPage);
+	}
+	
+	public Page<NovelDetail> findNovelDetailByCondition(NovelDetail po, Pageable basicPage) {
+
+		Specification<NovelDetail> specification = new Specification<NovelDetail>() {
+			@Override
+			public Predicate toPredicate(Root<NovelDetail> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				List<Predicate> predicates = new ArrayList<>();
+				predicates.add(cb.equal(root.get("novel_id").as(Long.class), po.getNovel_id()));
+				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+			}
+		};
+		return novelDetailRep.findAll(specification, basicPage);
+	}
+	@Transient
+	public Novel updateNovelAndNovelDetail(NovelDetail po) {
+		NovelDetail detail = this.findNovelDetailById(po.getId());
+		if(detail==null){
+			detail=new NovelDetail();
+		}
+		detail.setChapter_name(po.getChapter_name());
+		detail.setFree_state(po.getFree_state());
+		detail.setUpdate_time(new Date());
+		detail.setNovel_id(po.getNovel_id());
+		Novel novel=novelRep.findOne(detail.getNovel_id());
+		novel.setNovel_new_chapter(po.getChapter_name());
+		novel.setNovel_update_time(new Date());
+		novelDetailRep.saveAndFlush(detail);
+		return novelRep.saveAndFlush(novel);
+	}
+	
+	@Transient
+	public Novel updateNovel(NovelDetail po) {
+		NovelDetail detail = this.findNovelDetailById(po.getId());
+		detail.setUpdate_time(new Date());
+		Novel novel=novelRep.findOne(detail.getNovel_id());
+		novel.setNovel_page_url(detail.getChapter_url());
+		novel.setNovel_update_time(new Date());
+		novelDetailRep.saveAndFlush(detail);
+		return novelRep.saveAndFlush(novel);
+	}
+	
+	
+	public List<SchemeView> findBySchemeViewByUserid(int start,int end) {
+		// 执行原生SQL
+		String sql = "select a.*,b.chapter_name,c.novel_name,(select count(*) from tbl_user where scheme_id=a.id) as subscribe_num ,"
+				+ " (select count(*) from tbl_recharge_detail where result=1 and user_id in (select id from tbl_user where scheme_id=a.id)) as recharge_num,"
+				+ " (select sum(recharge_money) from tbl_recharge_detail where result=1 and user_id in (select id from tbl_user where scheme_id=a.id)) as recharge_money"
+				+ " from tbl_novel_scheme  a  left join tbl_novel_detail b on a.novel_detail_id=b.id "
+				+ " left join tbl_novel c on a.novel_id=c.id order by a.id desc limit :start,:end";
+		Query nativeQuery = entityManager.createNativeQuery(sql);
+		nativeQuery.setParameter("start", start);
+		nativeQuery.setParameter("end", end);
+		// 指定返回对象类型
+		nativeQuery.unwrap(SQLQuery.class).setResultTransformer(Transformers.aliasToBean(SchemeView.class));
+		// 返回对象 List<T>
+		@SuppressWarnings("unchecked")
+		List<SchemeView> list = nativeQuery.getResultList();
+		if (list.size() == 0) {
+			return null;
+		}
+		return list;
+	}
+	
+	public List<NovelScheme> findNovelSchemeList() {
+		return	novelSchemeRep.findAll();
+	}
+}

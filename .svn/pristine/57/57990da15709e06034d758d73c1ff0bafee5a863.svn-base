@@ -1,0 +1,219 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="/htgl/css/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/htgl/css/style.css" />
+<title>添加标的</title>
+<meta name="keywords"
+	content="H-ui.admin v3.1,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description"
+	content="H-ui.admin v3.1，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+
+</head>
+<body>
+	<div ng-app="myApp" ng-controller="bidaddCtrl">
+		<article class="page-container">
+			<form class="form form-horizontal" id="form-admin-add">
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>标名：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="bidInfoPO.name">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>项目总金额(元)：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="bidInfoPO.lccount">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>项目期限：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text"
+							ng-model="bidInfoPO.period_month">
+					</div>
+					
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>期限类型：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<span class="select-box" style="width: 150px;"> <select 
+							class="select" ng-model="bidInfoPO.term_unit" >
+							<option value="">--请选择--</option>
+							<option ng-repeat="x in termunits" value="{{x.code}}">{{x.site}}</option>
+						</select>
+						</span>
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>年化收益率(%)：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input type="text" class="input-text" ng-model="bidInfoPO.nlv">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3"><span
+						class="c-red">*</span>还款方式：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<span class="select-box" style="width: 150px;"> <select 
+							class="select" ng-model="bidInfoPO.refundType" >
+							<option value="">--请选择--</option>
+							<option ng-repeat="x in levels" value="{{x.code}}">{{x.site}}</option>
+							
+						</select>
+						</span>
+						<span class="c-red">请选择先息后本</span>
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-3">项目基本描述：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<textarea name="" cols="" rows="" class="textarea"
+							dragonfly="true" ng-model="bidInfoPO.description"></textarea>
+						<p class="textarea-numberbar">
+							<em class="textarea-length">0</em>/100
+						</p>
+					</div>
+				</div>
+				<div class="row cl">
+					<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+						<button type="submit" class="btn btn-success radius"
+							ng-click="submit()">&nbsp;&nbsp;提交&nbsp;&nbsp;</button>
+					</div>
+				</div>
+			</form>
+		</article>
+	</div>
+	<!--/请在上方写此页面业务相关的脚本-->
+</body>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/htgl/js/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/htgl/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/htgl/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript"
+	src="/htgl/js/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/htgl/js/angular-1.2.21.min.js"></script>
+<script type="text/javascript">
+	var app = angular.module('myApp', []);
+	app.controller('bidaddCtrl', function($scope, $http) {
+
+		$scope.submit = function() {
+
+			if (typeof $scope.bidInfoPO == 'undefined'
+					|| $scope.bidInfoPO == null
+					|| $scope.bidInfoPO.name == null
+					|| $scope.bidInfoPO.name == '') {
+				alert('标名不能为空');
+				return;
+			}
+			if ($scope.bidInfoPO.lccount == null
+					|| $scope.bidInfoPO.lccount == '') {
+				alert('项目总金额不能为空');
+				return;
+			}else{
+				if(!$scope.isNumber($scope.bidInfoPO.lccount)){
+					alert('项目总金额只能为数字');
+					return;
+				}
+			}
+			if ($scope.bidInfoPO.period_month == null
+					|| $scope.bidInfoPO.period_month == '') {
+				alert('项目期限不能为空');
+				return;
+			}else{
+				if(!$scope.isNumber($scope.bidInfoPO.period_month)){
+					alert('项目期限只能为数字');
+					return;
+				}
+			}
+			if ($scope.bidInfoPO.term_unit == null || $scope.bidInfoPO.term_unit == '') {
+				alert('期限类型不能为空');
+				return;
+			}
+			if ($scope.bidInfoPO.nlv == null || $scope.bidInfoPO.nlv == '') {
+				alert('年化收益率不能为空');
+				return;
+			}else{
+				if(!$scope.isNumber($scope.bidInfoPO.nlv)){
+					alert('年化收益率只能为数字');
+					return;
+				}
+			}
+			if ($scope.bidInfoPO.refundType == null || $scope.bidInfoPO.refundType == '') {
+				alert('还款方式不能为空');
+				return;
+			}
+			else{
+				if($scope.bidInfoPO.refundType!="FIRSEINTREST_LASTPRICIPAL"){
+					alert('目前大标只能先息后本');
+					return;
+				}
+			}
+			
+			var param = {
+				"bidInfoPO" : JSON.stringify($scope.bidInfoPO)
+			}
+			$http({
+				method : "POST",
+				params : param,
+				url : "/financial/addBid"//  /role/roleOpinionList
+			}).success(function(data) {
+				if (data.code == '0000') {
+					alert(data.msg);
+				} else {
+					alert(data.msg);
+					window.parent.location.reload(); //刷新父页面
+					var index = parent.layer.getFrameIndex(window.name);
+					parent.layer.close(index);
+				}
+			});
+		};
+
+		$scope.levels = [
+		    {site : "一次性还本付息", code : "ONE_TIME_SERVICING"},
+		    {site : "先息后本", code : "FIRSEINTREST_LASTPRICIPAL"},
+		    {site : "等额本息", code : "FIXED_PAYMENT_MORTGAGE"},
+		    {site : "等额本金", code : "FIXED_BASIS_MORTGAGE"}
+		];
+		$scope.termunits = [
+		    {site : "月", code : "1"},
+		    {site : "天", code : "0"}
+		];
+		
+		$scope.isNumber=function(val){
+		    var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+// 		    var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+		    if(regPos.test(val)){
+		        return true;
+		    }else{
+		        return false;
+		    }
+		}
+	});
+</script>
+</html>
